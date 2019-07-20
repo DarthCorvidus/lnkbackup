@@ -1,0 +1,41 @@
+lnkbackup
+
+lnkbackup processes one or more backup jobs defined within config files.
+
+Usage:
+
+	lnkbackup.php <config file or directory>
+
+Configuration:
+
+lnkbackup processes either one configuration file or a directory containing
+several configuration files ending with .conf, such as:
+
+	conf.d/mailserver.conf
+	conf.d/fileserver.conf
+	conf.d/images.conf
+
+Configuration files follow ini-format and must contain the following parameters:
+
+	source		remote or local directory following rsync conventions, such as
+				/data/fileserver or root@fileserver.example.com:/data/fileserver
+	target		local directory containing backup, such as /backup/fileserver.
+
+Configuration files may contain the following parameters:
+	exclude		absolute path to exclude file, which will be given to rsync via
+				--exclude-file.
+
+Parameters:
+
+	--force-date date as ISO 8601 to replace current date.
+
+Process:
+
+lnkbackup creates a new folder „temp“ within it's target directory, which will
+then be moved to <date>. On each Sunday and each first day of month and year,
+lnkbackup copies <date> to temp.<period>, which will then be moved to
+<date>.<period>.
+
+When several config files are used via config directory, lnkbackup will process
+one job after another. Each job will use "now" at the time the script was
+called, or the date given by --force-date.
