@@ -1,0 +1,38 @@
+lnktrim - script to remove specific entries from a backup
+
+lnktrim is aimed at removing specific entries from a backup, say, all daily
+entries before a specific date.
+
+Usage:
+
+	lnktrim.php <backup path> [parameters]
+
+For safety reasons, --execute must be set as a parameter to actually delete from
+a set.
+
+Parameters:
+
+	--from		Date from which to start deleting entries.
+	--to		Date until which to delete entries.
+	--max		Maximum number of entries to delete in one run.
+	--days		Amount of days to keep, starting either from now or --to.
+	--weeks		Amount of weeks to keep, starting either from now or --to.
+	--weeks		Amount of months to keep, starting either from now or --to.
+	--years		Amount of years to keep, starting either from now or --to.
+	--execute	Necessary to delete files; when called without --delete,
+				lnktrim.php only shows what would be deleted and kept.
+
+Examples:
+
+	lnktrim.php <backup path> --days=365 --years=1 --weeks=52 --months=12
+
+Deletes all entries which are older than one year.
+
+	lnktrim.php <backup path> --days=0 --years=0 --weeks=0 --months=0 --to=2017-12-31
+	
+
+Deletes everything before and including 2017-12-31.
+
+	lnktrim.php <backup path> --days=365
+
+Deletes daily entrys older than one year, but keeps everything else.
