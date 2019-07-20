@@ -58,6 +58,13 @@ class Date {
 	return $date;
 	}
 	
+	private function isUnit(int $unit) {
+		if(!in_array($unit, $this->units)) {
+			throw new LogicException("parameter must be class unit constant");
+		}
+	return true;
+	}
+	
 	/**
 	* get ISO compliant date
 	* 
