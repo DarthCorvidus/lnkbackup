@@ -1,0 +1,21 @@
+lnkbackup
+
+lnkbackup is a backup utility based on rsync, written in PHP. lnkbackup creates
+incremental snapshots using rsnync's --link-dest ability. Also, it creates
+entries using the date (2019-01-01) as name and it creates weekly, monthly and
+yearly snapshots using YYYY-MM-DD.weekly, .monthly and .yearly as suffix each
+Sunday or first of month/week.
+
+lnkbackup allows to define several backup jobs in one directory, which are
+processed consecutively.
+
+Apart from that, lnkbackup offers several programs aimed at administering
+backup sets:
+
+	*lnkbackup - the backup script
+	*lnkcopy - copy a backup to another location
+	*lnktrim - remove older backup entries
+
+rsnapshot comes with ABSOLUTELY NO WARRANTY. This is free software, and you are
+welcome to redistribute it under certain conditions. See the GNU General Public
+Licence for details.
