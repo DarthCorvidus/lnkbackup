@@ -1,0 +1,23 @@
+lnkcopy - copies one Backup set to another
+
+It may be necessary to transfer a backup from one filesystem to another. While
+this could be done with rsync -H, this approach offers little control on how the
+copy job is proceeding. Also, when getting interrupted, rsync would have to
+start anew, which is time consuming with large sets. lnkcopy therefore copies
+one entry at a time, using --link-dest to link unchanged files to a previous
+entry.
+
+Usage:
+	
+	lnkcopy <source> <target> [parameters]
+
+Parameters:
+
+
+	--from		Date of entry from which to start the copy process. Use this
+				and --to to select for a specific range of entries.
+	--to		Last date of entry, which ends the copy process.
+	--max		Maximum files to be transferred in one run.
+
+lnkcopy creates a directory "temp" on it's target, which will then be renamed to
+the final name when an entry is copied.
