@@ -161,7 +161,7 @@ class Date {
 		$numeric = $this->numeric;
 		switch($unit) {
 			case self::WEEK:
-				$numeric -= $this->getDayOfWeek();
+				$numeric -= $this->getDate("N")-1;
 			break;
 			case self::MONTH:
 				$numeric = gregoriantojd($array["month"], 1, $array["year"]);
@@ -170,7 +170,7 @@ class Date {
 				$numeric = gregoriantojd(1, 1, $array["year"]);
 			break;
 			case self::QUARTER:
-				$quarter = ceil($this->getMonth()/3)-1;
+				$quarter = ceil($this->getDate("j")/3)-1;
 				$temp = $this->floor(self::YEAR, TRUE);
 				$temp->addUnit($quarter*3, self::MONTH);
 				$numeric = $temp->getNumeric();
@@ -197,7 +197,7 @@ class Date {
 		$numeric = $this->numeric;
 		switch($unit) {
 			case self::WEEK:
-				$numeric += (6-$this->getDayOfWeek());
+				$numeric += (7-$this->getDate("N"));
 			break;
 			case self::MONTH:
 				$days = cal_days_in_month(CAL_GREGORIAN, $array["month"], $array["year"]);
