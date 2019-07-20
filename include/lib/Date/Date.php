@@ -20,8 +20,8 @@ class Date {
 	const MONTH = 3;
 	const YEAR = 4;
 	const QUARTER = 5;
-	protected $units = array(self::DAY, self::WEEK, self::MONTH, self::QUARTER, self::YEAR);
-	protected $defaultUnit = self::DAY;
+	private $units = array(self::DAY, self::WEEK, self::MONTH, self::QUARTER, self::YEAR);
+	private $defaultUnit = self::DAY;
 	private $numeric;
 	/**
 	* construct Date. If everything is left empty, current date is used
@@ -51,6 +51,13 @@ class Date {
 		$date = new Date($tmp[0], $tmp[1], $tmp[2]);
 	return $date;
 	}
+	
+	static function fromInt($days): Date {
+		$date = new Date();
+		$date->numeric = $days;
+	return $date;
+	}
+	
 	/**
 	* get ISO compliant date
 	* 
