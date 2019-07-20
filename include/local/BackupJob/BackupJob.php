@@ -48,7 +48,7 @@ class BackupJob {
 	}
 	
 	private function copyWMY(string $final) {
-		if($this->date->getDayOfWeek()===6) {
+		if($this->date->getDate("N")===7) {
 			$this->copyPeriodic("weekly");
 		}
 		if($this->date->getDay()==1) {
