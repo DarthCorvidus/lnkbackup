@@ -48,13 +48,13 @@ class BackupJob {
 	}
 	
 	private function copyWMY(string $final) {
-		if($this->date->getDate("N")===7) {
+		if($this->date->getDate("N")==7) {
 			$this->copyPeriodic("weekly");
 		}
-		if($this->date->getDay()==1) {
+		if($this->date->getDate("d")==="01") {
 			$this->copyPeriodic("monthly");
 		}
-		if($this->date->getDate("m-d")=="01-01") {
+		if($this->date->getDate("m-d")==="01-01") {
 			$this->copyPeriodic("yearly");
 		}
 	}
