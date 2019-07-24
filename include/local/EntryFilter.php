@@ -9,8 +9,13 @@ class EntryFilter {
 	private $from;
 	private $to;
 	private $days;
+	private $subdir;
 	function __construct() {
 		;
+	}
+	
+	function setSubdir(string $subdir) {
+		$this->subdir = $subdir;
 	}
 	
 	function setPeriod(string $period){ 
@@ -36,7 +41,10 @@ class EntryFilter {
 		if($this->to!=NULL && $entry->getDate()->getNumeric()>$this->to->getNumeric()) {
 			return false;
 		}
-
+		
+		if($this->subdir!=NULL && !$entry->hasSubdir($this->subdir)) {
+			return false;
+		}
 	return true;
 	}
 }

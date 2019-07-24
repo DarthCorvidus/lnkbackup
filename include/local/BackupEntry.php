@@ -26,6 +26,11 @@ class BackupEntry {
 		$this->type = $exp[1];
 	}
 	
+	function hasSubdir(string $file): bool {
+		$path = $this->path."/".$file;
+	return is_dir($path);
+	}
+	
 	function getPeriod():string {
 		return $this->type;
 	}
