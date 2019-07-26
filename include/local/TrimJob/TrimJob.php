@@ -11,6 +11,7 @@ class TrimJob {
 	private $now;
 	private $paramConst;
 	private $keep = array();
+	private $subdir;
 	function __construct(array $argv) {
 		$model = new ArgvTrim();
 		$this->args = new Argv($argv, $model);
@@ -18,8 +19,13 @@ class TrimJob {
 		$this->filter = new EntryFilter();
 		$this->now = Date::fromIsodate($this->args->getValue("to"));
 		$this->filter->setTo($this->now);
+		
 		if($this->args->hasValue("from")) {
 			$this->filter->setFrom(Date::fromIsodate($this->args->getValue("from")));
+		}
+		if($this->args->hasValue("subdir")) {
+			$this->filter->setSubdir($this->args->getValue("subdir"));
+			$this->subdir = $this->args->getValue("subdir");
 		}
 		$this->paramConst["weeks"] = array(BackupEntry::WEEKLY, Date::WEEK);
 		$this->paramConst["months"] = array(BackupEntry::MONTHLY, Date::MONTH);
@@ -101,11 +107,11 @@ class TrimJob {
 		if($this->args->getBoolean("execute")) {
 			echo "Deleting:".PHP_EOL;
 			foreach($delete as $key=> $value) {
-				echo $value.PHP_EOL;
+				echo $value."/".$this->subdir.PHP_EOL;
 				if($value=="/" || $value=="") {
 					die();
 				}
-				BackupJob::exec("rm ".escapeshellarg($value)." -rf");
+				BackupJob::exec("rm ".escapeshellarg($value."/".$this->subdir)." -rf");
 			}
 		}
 	}

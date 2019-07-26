@@ -27,6 +27,8 @@ class ArgvTrim implements ArgvModel {
 		$years = new ArgString("years", -1);
 		$years->setValidate(new ValidateInteger());
 		$this->args[] = $years;
+		$subdir = new ArgString("subdir");
+		$this->args[] = $subdir;
 	}
 
 	public function getArgModel(int $arg): \ArgModel {
