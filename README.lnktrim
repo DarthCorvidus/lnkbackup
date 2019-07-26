@@ -19,6 +19,8 @@ Parameters:
 	--weeks		Amount of weeks to keep, starting either from now or --to.
 	--weeks		Amount of months to keep, starting either from now or --to.
 	--years		Amount of years to keep, starting either from now or --to.
+	--subdir	directory relative to the root of the backup which will be
+				trimmed.
 	--execute	Necessary to delete files; when called without --delete,
 				lnktrim.php only shows what would be deleted and kept.
 
@@ -36,3 +38,8 @@ Deletes everything before and including 2017-12-31.
 	lnktrim.php <backup path> --days=365
 
 Deletes daily entrys older than one year, but keeps everything else.
+
+	lnktrim <backup path> --days=0 -years=0 --weeks=0 --months=0 \
+	--subdir=browserprofile/cache
+
+Deletes the subdirectory „browserprofile/cache“ from every backup entry.
