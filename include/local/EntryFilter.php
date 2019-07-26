@@ -6,6 +6,7 @@
  */
 class EntryFilter {
 	private $period;
+	private $periods = array();
 	private $from;
 	private $to;
 	private $days;
@@ -16,6 +17,10 @@ class EntryFilter {
 	
 	function setSubdir(string $subdir) {
 		$this->subdir = $subdir;
+	}
+	
+	function addPeriod(string $period) {
+		$this->periods[] = $period;
 	}
 	
 	function setPeriod(string $period){ 
@@ -31,6 +36,9 @@ class EntryFilter {
 	}
 	
 	function match(BackupEntry $entry) {
+		if(!empty($this->periods) && !in_array($entry->getPeriod(), $this->periods)) {
+			return false;
+		}
 		if($this->period!=NULL && $this->period!=$entry->getPeriod()) {
 			return false;
 		}
