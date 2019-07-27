@@ -15,6 +15,7 @@ backup sets:
 	*lnkbackup - the backup script
 	*lnkcopy - copy a backup to another location
 	*lnktrim - remove older backup entries
+	*lnkusage - track the usage of space over several entries
 
 rsnapshot comes with ABSOLUTELY NO WARRANTY. This is free software, and you are
 welcome to redistribute it under certain conditions. See the GNU General Public
