@@ -1,0 +1,24 @@
+lnkusage
+
+Tracks the disk space usage of backup sets using „du“.
+
+A disadvantage of incremental backups is that files which are large and change
+often may tie up disk space very quickly. A typical example would be Outlook
+PST-Files or mbox files of a mail server/mail client or large collection of data
+which change often, such as local caches for Dropbox or OwnCloud/Nextcloud.
+lnkusage will display space usage of a number of backup entries. Large increases
+should be noted and acted upon accordingly.
+
+Usage:
+
+	lnkusage <backup set> [OPTIONS]
+
+When calling lnkusage without any options, every entry will be compared.
+
+Parameters:
+
+	--daily		include daily entries
+	--weekly	include weekly entries
+	--monthly	include monthly entries
+	--yearly	include yearly entries
+	--subdir	only checks a certain subdirectory within the backup set.
