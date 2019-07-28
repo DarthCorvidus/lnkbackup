@@ -18,6 +18,13 @@ Parameters:
 				and --to to select for a specific range of entries.
 	--to		Last date of entry, which ends the copy process.
 	--max		Maximum files to be transferred in one run.
+	--days		include days
+	--weeks		include weeks
+	--months	include months
+	--years		include years
+
+Please note that, if days, weeks, months and years are ommited, every entry will
+be copied.
 
 lnkcopy creates a directory "temp" on it's target, which will then be renamed to
 the final name when an entry is copied.
