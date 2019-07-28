@@ -27,6 +27,18 @@ class CopyJob {
 		if($this->argv->hasValue("to")) {
 			$this->filter->setTo(Date::fromIsodate($this->argv->getValue("to")));
 		}
+		if($this->argv->getBoolean("daily")) {
+			$this->filter->addPeriod(BackupEntry::DAILY);
+		}
+		if($this->argv->getBoolean("weekly")) {
+			$this->filter->addPeriod(BackupEntry::WEEKLY);
+		}
+		if($this->argv->getBoolean("monthly")) {
+			$this->filter->addPeriod(BackupEntry::MONTHLY);
+		}
+		if($this->argv->getBoolean("yearly")) {
+			$this->filter->addPeriod(BackupEntry::YEARLY);
+		}
 	}
 	
 	function getDiff(): array {
