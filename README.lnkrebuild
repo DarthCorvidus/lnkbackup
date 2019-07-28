@@ -1,0 +1,21 @@
+lnkcopy - rebuilds missing periodic entries
+
+lnkcopy checks every daily entry and looks for missing periodic entries such as
+.weekly. If they do not exist, lnkcopy rebuilds them using cp -al.
+
+Usage:
+	
+	lnkrebuild <backup>
+
+Parameters:
+
+
+	--weeks		include weeks
+	--months	include months
+	--years		include years
+
+Please note that, if weeks, months and years are ommited, every periodic entry
+will be rebuilt.
+
+lnkrebuild creates a directory "temp.rebuild" for every entry which needs to be
+rebuilt, which is then moved to it's final place.
