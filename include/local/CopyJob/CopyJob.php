@@ -85,11 +85,17 @@ class CopyJob {
 			
 	function run() {
 		$diff = $this->getDiff();
-		if($this->argv->getBoolean("dry")) {
-			foreach($diff as $value) {
-				echo $value.PHP_EOL;
-			}
-		return;
+		if(empty($diff)) {
+			echo "No entries to be copied.".PHP_EOL;
+			return;
+		}
+		echo "Entries to be copied:".PHP_EOL;
+		foreach($diff as $value) {
+			echo "\t".$value.PHP_EOL;
+		}
+		if(!$this->argv->getBoolean("run")) {
+			echo "Please use --run to copy entries.".PHP_EOL;
+			return;
 		}
 		//getDiff will return a limited amount of entries if --max is set.
 		//However, it will be refreshed; therefore, a total countdown of all
