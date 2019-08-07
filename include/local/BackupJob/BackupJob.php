@@ -14,10 +14,13 @@ class BackupJob {
 		$this->backup = new Backup($this->config->getTarget());
 	}
 	
-	static function exec(string $command) {
+	static function exec(string $command, $prefix = NULL) {
 		$handle = popen($command, "r");
+		if($prefix!=NULL) {
+			$prefix .= ": ";
+		}
 		while($line = fgets($handle)) {
-			echo $line;
+			echo $prefix.$line;
 		}
 		fclose($handle);
 	}
