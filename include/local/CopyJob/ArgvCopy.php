@@ -22,7 +22,7 @@ class ArgvCopy implements ArgvModel {
 	}
 
 	public function getBoolean(): array {
-		return array("run", "daily", "weekly", "monthly", "yearly");
+		return array("run", "daily", "weekly", "monthly", "yearly", "progress");
 	}
 
 	public function getParamCount(): int {

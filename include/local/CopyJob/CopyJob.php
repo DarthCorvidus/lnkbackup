@@ -72,7 +72,12 @@ class CopyJob {
 		}
 		$rsync = "rsync ".implode(" ", $paramRS);
 		echo $rsync.PHP_EOL;
-		BackupJob::exec($rsync);
+		if($this->argv->getBoolean("progress")) {
+			BackupJob::exec($rsync, $sourceBasename);
+		} else {
+			BackupJob::exec($rsync);
+		}
+		
 		#exec($rsync);
 		$paramMV[] = escapeshellarg($targetTemp);
 		$paramMV[] = escapeshellarg($targetFinal);

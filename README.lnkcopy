@@ -22,9 +22,13 @@ Parameters:
 	--weeks		include weeks
 	--months	include months
 	--years		include years
+	--run		start copy job
+	--progress	shows basename of the copied entry at the start of each line of
+				rsync's output, allowing to keep track of progress when copying
+				large backups.
 
 Please note that, if days, weeks, months and years are ommited, every entry will
 be copied.
 
-lnkcopy creates a directory "temp" on it's target, which will then be renamed to
+lnkcopy creates a directory "temp.copy" on it's target, which will then be renamed to
 the final name when an entry is copied.
