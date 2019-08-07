@@ -9,6 +9,8 @@ class CopyJob {
 	private $target;
 	private $argv;
 	private $filter;
+	private $total = 0;
+	private $progress = 1;
 	function __construct(array $array) {
 		if(!isset($array[1])) {
 			throw new Exception("first parameter (source) is missing");
@@ -73,19 +75,18 @@ class CopyJob {
 		$rsync = "rsync ".implode(" ", $paramRS);
 		echo $rsync.PHP_EOL;
 		if($this->argv->getBoolean("progress")) {
-			BackupJob::exec($rsync, $sourceBasename);
+			BackupJob::exec($rsync, $sourceBasename." (".$this->progress."/".$this->total.")");
 		} else {
 			BackupJob::exec($rsync);
 		}
 		
-		#exec($rsync);
+		exec($rsync);
 		$paramMV[] = escapeshellarg($targetTemp);
 		$paramMV[] = escapeshellarg($targetFinal);
 		$mv = "mv ".implode(" ", $paramMV);
 		echo $mv.PHP_EOL;
 		BackupJob::exec($mv);
-		
-		#exec($mv);
+		$this->progress++;
 	}
 			
 	function run() {
@@ -106,19 +107,21 @@ class CopyJob {
 		//However, it will be refreshed; therefore, a total countdown of all
 		//folders copied must be used as well.
 		$max = NULL;
-		if($this->argv->getValue("max")!=0) {
+		$this->total = count($diff);
+		if($this->argv->getValue("max")!=-1) {
 			$max = (int)$this->argv->getValue("max");
+			$this->total = $max;
 		}
 		while(!empty($diff)) {
 			if($max!==NULL && $max===0) {
 				break;
 			}
 			if($this->target->getCollection()->getCount()==0) {
-				echo "Erste Kopie ".$diff[0].PHP_EOL;
+				echo "First copy ".$diff[0].PHP_EOL;
 				$this->copy($diff[0], false);
 			} else {
 				$this->copy($diff[0], true);
-				echo "Weitere Kopie ".$diff[0]." → ".$this->target->getLatest()->getBasename().PHP_EOL;
+				echo "Subsequent copy ".$diff[0]." → ".$this->target->getLatest()->getBasename().PHP_EOL;
 			}
 			if($max!==NULL) {
 				$max--;
