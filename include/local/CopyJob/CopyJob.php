@@ -60,7 +60,7 @@ class CopyJob {
 	
 	private function copy(string $sourceBasename, bool $link) {
 		$sourcePath = $this->source->getLocation()."/".$sourceBasename."/";
-		$targetTemp = $this->target->getLocation()."/temp/";
+		$targetTemp = $this->target->getLocation()."/temp.copy/";
 		$targetFinal = $this->target->getLocation()."/".$sourceBasename."/";
 		$paramRS[] = escapeshellarg($sourcePath);
 		$paramRS[] = escapeshellarg($targetTemp);
