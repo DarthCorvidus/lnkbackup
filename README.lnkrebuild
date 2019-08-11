@@ -13,6 +13,7 @@ Parameters:
 	--weeks		include weeks
 	--months	include months
 	--years		include years
+	--run		rebuild entries
 
 Please note that, if weeks, months and years are ommited, every periodic entry
 will be rebuilt.
