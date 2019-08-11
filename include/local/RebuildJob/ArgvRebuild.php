@@ -17,7 +17,7 @@ class ArgvRebuild implements ArgvModel {
 	}
 
 	public function getBoolean(): array {
-		return array("weekly", "monthly", "yearly");
+		return array("weekly", "monthly", "yearly", "run");
 	}
 
 	public function getParamCount(): int {

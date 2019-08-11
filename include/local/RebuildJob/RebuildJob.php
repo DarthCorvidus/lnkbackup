@@ -14,6 +14,10 @@ class RebuildJob {
 	}
 	
 	private function createCopy(string $source, string $location, string $finalBase) {
+		if(!$this->argv->getBoolean("run")) {
+			echo basename($source)." to ".$finalBase.PHP_EOL;
+		return;
+		}
 		$temp = $location."/temp.rebuild";
 		$final = $location."/".$finalBase;
 		echo $source.PHP_EOL;
@@ -53,6 +57,9 @@ class RebuildJob {
 			}
 
 			#echo $entry->getPath().PHP_EOL;
+		}
+		if(!$this->argv->getBoolean("run")) {
+			echo "Please use --run to rebuild entries.".PHP_EOL;
 		}
 	}
 }
