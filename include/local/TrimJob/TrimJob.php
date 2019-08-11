@@ -104,7 +104,7 @@ class TrimJob {
 		foreach($this->keep as $key => $value) {
 			echo "    ".$value.PHP_EOL;
 		}
-		if($this->args->getBoolean("execute")) {
+		if($this->args->getBoolean("run")) {
 			echo "Deleting:".PHP_EOL;
 			foreach($delete as $key=> $value) {
 				echo $value."/".$this->subdir.PHP_EOL;

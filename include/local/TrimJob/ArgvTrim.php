@@ -36,7 +36,7 @@ class ArgvTrim implements ArgvModel {
 	}
 
 	public function getBoolean(): array {
-		return array("execute");
+		return array("run");
 	}
 
 	public function getParamCount(): int {

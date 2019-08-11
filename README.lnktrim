@@ -21,7 +21,7 @@ Parameters:
 	--years		Amount of years to keep, starting either from now or --to.
 	--subdir	directory relative to the root of the backup which will be
 				trimmed.
-	--execute	Necessary to delete files; when called without --delete,
+	--run		Necessary to delete files; when called without --run,
 				lnktrim.php only shows what would be deleted and kept.
 
 Examples:
