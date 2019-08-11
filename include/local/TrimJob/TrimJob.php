@@ -83,6 +83,26 @@ class TrimJob {
 	return $delete;
 	}
 	
+	private function delete(string $path) {
+		$fullpath = $path."/".$this->subdir;
+		echo $fullpath.PHP_EOL;
+		if($path=="/" || $path=="") {
+			die();
+		}
+		echo $this->backup->getLocation().PHP_EOL;
+		$tempdir = $this->backup->getLocation()."/temp.delete";
+		if(file_exists($tempdir)) {
+			$trm = "rm ".escapeshellarg($tempdir)." -rf";
+			echo $trm.PHP_EOL;
+			BackupJob::exec($trm);
+		}
+		$mv = "mv ".escapeshellarg($fullpath)." ".escapeshellarg($tempdir);
+		BackupJob::exec($mv);
+		echo $mv.PHP_EOL;
+		$rm = "rm ".escapeshellarg($tempdir)." -rf";
+		echo $rm.PHP_EOL;
+		BackupJob::exec($rm);
+	}
 	
 	function run() {
 		$delete = array();
@@ -107,12 +127,11 @@ class TrimJob {
 		if($this->args->getBoolean("run")) {
 			echo "Deleting:".PHP_EOL;
 			foreach($delete as $key=> $value) {
-				echo $value."/".$this->subdir.PHP_EOL;
-				if($value=="/" || $value=="") {
-					die();
-				}
-				BackupJob::exec("rm ".escapeshellarg($value."/".$this->subdir)." -rf");
+				$this->delete($value);
 			}
+		} else {
+			echo "Please use --run to delete entries.".PHP_EOL;
+			return;
 		}
 	}
 }
