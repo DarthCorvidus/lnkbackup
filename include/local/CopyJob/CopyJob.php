@@ -54,7 +54,7 @@ class CopyJob {
 				$diff[] = $sourceBasename;
 			}
 		}
-		if($this->argv->hasValue("max") && $this->argv->getValue("max")!=0) {
+		if($this->argv->hasValue("max") && $this->argv->getValue("max")>=0) {
 			$diff = array_slice($diff, 0, $this->argv->getValue("max"));
 		}
 	return $diff;
