@@ -8,6 +8,7 @@ class RebuildJob {
 	private $argv;
 	private $backup;
 	private $rebuild = array();
+	private $i = 0;
 	function __construct(array $argv) {
 		$model = new ArgvRebuild();
 		$this->argv = new Argv($argv, $model);
@@ -45,6 +46,9 @@ class RebuildJob {
 	}
 	
 	private function rebuild(string $period, BackupEntry $entry): bool {
+		if($this->argv->getValue("max")>=0 && $this->i==$this->argv->getValue("max")) {
+			return false;
+		}
 		$target = $this->backup->getLocation()."/".$entry->getBasename().".".$period;
 		if(file_exists($target)) {
 			return false;
@@ -63,7 +67,16 @@ class RebuildJob {
 		$location = $this->backup->getLocation();
 		$k = 0;
 		for($i=0;$i<$entries->getCount();$i++) {
-			if($this->argv->getValue("max")>=0 && $k==$this->argv->getValue("max")) {
+			/**
+			 * Handling of --max is a little bit more difficult here. --max is
+			 * supposed to limit the amount of actions done, but one day may
+			 * result in up to three rebuilds. If just $i was checked, then at
+			 * worst --max=1 could result in three actions on the first of a
+			 * year.
+			 * Therefore, progress is tracked globally and checked within
+			 * rebuild() as well.
+			 */
+			if($this->argv->getValue("max")>=0 && $this->i==$this->argv->getValue("max")) {
 				break;
 			}
 			$entry = $entries->getEntry($i);
@@ -73,18 +86,15 @@ class RebuildJob {
 			$basename = $entry->getBasename();
 			if($entry->getDate()->getDate("N")==7 && $this->rebuild(BackupEntry::WEEKLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".weekly");
-				$k++;
-				continue;
+				$this->i++;
 			}
 			if($entry->getDate()->getDate("m")=="01" && $this->rebuild(BackupEntry::MONTHLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".monthly");
-				$k++;
-				continue;
+				$this->i++;
 			}
 			if($entry->getDate()->getDate("m-d")=="01-01" && $this->rebuild(BackupEntry::YEARLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".yearly");
-				$k++;
-				continue;
+				$this->i++;
 			}
 
 			#echo $entry->getPath().PHP_EOL;
