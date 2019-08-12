@@ -88,7 +88,7 @@ class RebuildJob {
 				$this->createCopy($entry->getPath(), $location, $basename.".weekly");
 				$this->i++;
 			}
-			if($entry->getDate()->getDate("m")=="01" && $this->rebuild(BackupEntry::MONTHLY, $entry)) {
+			if($entry->getDate()->getDate("d")=="01" && $this->rebuild(BackupEntry::MONTHLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".monthly");
 				$this->i++;
 			}
