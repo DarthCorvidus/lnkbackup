@@ -80,7 +80,6 @@ class CopyJob {
 			BackupJob::exec($rsync);
 		}
 		
-		exec($rsync);
 		$paramMV[] = escapeshellarg($targetTemp);
 		$paramMV[] = escapeshellarg($targetFinal);
 		$mv = "mv ".implode(" ", $paramMV);
