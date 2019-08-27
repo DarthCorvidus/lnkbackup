@@ -1,15 +1,8 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- * Description of ArgString
- *
- * @author hm
+ * @copyright (c) 2019, Claus-Christoph Küthe
+ * @author Claus-Christoph Küthe <floss@vm01.telton.de>
+ * @license LGPL
  */
 class ArgString implements ArgModel {
 	private $name;
@@ -17,7 +10,7 @@ class ArgString implements ArgModel {
 	private $mandatory = false;
 	private $validate;
 	private $convert;
-	public function __construct(string $name, $default="") {
+	public function __construct(string $name, string $default = "") {
 		$this->name = $name;
 		$this->default = $default;
 	}

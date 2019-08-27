@@ -1,14 +1,8 @@
 <?php
 /**
  * @copyright (c) 2019, Claus-Christoph Küthe
- * @author Claus-Christoph Küthe <lnkbackup@vm01.telton.de>
+ * @author Claus-Christoph Küthe <floss@vm01.telton.de>
  * @license LGPL
- */
-
-/**
- * Description of ArgDate
- *
- * @author hm
  */
 class ArgDate implements ArgModel {
 	private $default;
@@ -58,5 +52,4 @@ class ArgDate implements ArgModel {
 	public function hasValidate(): bool {
 		return true;
 	}
-
 }
