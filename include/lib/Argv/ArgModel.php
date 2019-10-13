@@ -14,10 +14,6 @@
  */
 interface ArgModel {
 	/**
-	 * „Long“ name of a parameter, expecting two hyphens (ie. --date).
-	 */
-	function getLongName():string;
-	/**
 	 * returns a default value if it has one. If, for instance, --date is used,
 	 * it could be set to „now“.
 	 */
