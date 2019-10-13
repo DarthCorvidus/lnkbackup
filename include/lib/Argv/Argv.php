@@ -15,84 +15,138 @@
  */
 class Argv {
 	private $model;
-	private $long;
 	private $argv;
-	private $argvResult = array();
-	private $boolean = array();
-	private $longParams = array();
+	private $availablePositional = array();
+	private $availableNamed = array();
+	private $availableBoolean = array();
 	function __construct(array $argv, ArgvModel $model) {
 		$this->model = $model;
 		$this->argv = array_slice($argv, 1);
-		for($i = 0; $i<$this->model->getParamCount();$i++) {
-			$this->longParams[] = $this->model->getArgModel($i)->getLongName();
-		}
+		$this->getAvailable();
+		$this->sanityCheck();
+		$this->validate();
+	}
+	
+	private function getAvailable() {
 		foreach($this->argv as $key => $value) {
 			if(substr($value, 0, 2)=="--") {
-				$this->extractAll($value);
-			}
-		}
-		$this->extract();
-	}
-	
-	private function extractAll($value) {
-		$explode = explode("=", $value, 2);
-		$name = substr($explode[0], 2);
-		//checks whether a parameter is defined.
-		if(!in_array($name, $this->longParams) && !in_array($name, $this->model->getBoolean())) {
-			throw new InvalidArgumentException("Unknown parameter --".$name);
-		}
-		//checks if a boolean parameter is without a value.
-		if(count($explode)==2 && in_array($name, $this->model->getBoolean())) {
-			throw new InvalidArgumentException("Boolean parameter --".$name." must not have value");
-		}
-		//checks whether a non-boolean parameter has a value.
-		if(count($explode)==1 && in_array($name, $this->longParams)) {
-			throw new InvalidArgumentException("Parameter --".$name." expects value");
-		}
-		
-		if(count($explode)==2) {
-			$this->long[$name] = $explode[1];
-		} else {
-			$this->long[$name] = true;
-		}
-	}
-	
-	private function extractValue(ArgModel $arg) {
-		if(!isset($this->long[$arg->getLongName()]) && $arg->isMandatory()) {
-			throw new Exception("--".$arg->getLongName()." is mandatory");
-		}
-		if(!isset($this->long[$arg->getLongName()]) && $arg->hasDefault()) {
-			$this->argvResult[$arg->getLongName()] = $arg->getDefault();
-			return;
-		}
-		if(!isset($this->long[$arg->getLongName()])) {
-			return;
-		}
-		if($arg->hasValidate()) {
-			$arg->getValidate()->validate($this->long[$arg->getLongName()]);
-		}
-		
-		if($arg->hasConvert()) {
-			$this->argvResult[$arg->getLongName()] = $arg->getConvert()->convert($this->long[$arg->getLongName()]);
-			return;
-		}
-		$this->argvResult[$arg->getLongName()] = $this->long[$arg->getLongName()];
-	}
-	
-	private function extract() {
-		for($i=0;$i<$this->model->getParamCount();$i++) {
-			$arg = $this->model->getArgModel($i);
-			$this->extractValue($arg);
-		}
-		foreach($this->model->getBoolean() as $value) {
-			if(!isset($this->long[$value])) {
-				$this->boolean[$value] = false;
+				$this->getAvailableNamedOrBoolean($value);
 				continue;
 			}
-			$this->boolean[$value] = true;
+			$this->availablePositional[] = $value;
+		}
+		$this->getDefaults();
+	}
+	
+	private function getDefaults() {
+		foreach ($this->model->getArgNames() as $name) {
+			if(isset($this->availableNamed[$name])) {
+				continue;
+			}
+			if(!$this->model->getNamedArg($name)->hasDefault()) {
+				continue;
+			}
+			$this->availableNamed[$name] = $this->model->getNamedArg($name)->getDefault();
 		}
 	}
 	
+	private function getAvailableNamedOrBoolean(string $value) {
+		$exp = explode("=", $value, 2);
+		if(count($exp)==1) {
+			$this->availableBoolean[] = substr($value, 2);
+			return;
+		}
+		$this->availableNamed[substr($exp[0], 2)] = $exp[1];
+	}
+	
+	private function sanityCheck() {
+		$this->booleanSanity();
+		$this->positionalSanity();
+		$this->namedSanity();
+	}
+	
+	private function booleanSanity() {
+		$defined = $this->model->getBoolean();
+		foreach($this->availableBoolean as $value) {
+			if(!in_array($value, $defined)) {
+				throw new Exception("unknown boolean parameter --".$value);
+			}
+		}
+	}
+	
+	private function positionalSanity() {
+		$defined = $this->model->getPositionalCount();
+		for($i=0;$i<$defined;$i++) {
+			if(!isset($this->availablePositional[$i])) {
+				throw new Exception("Argument ".($i+1)." (".$this->model->getPositionalName($i).") missing");
+			}
+		}
+		if(count($this->availablePositional)>$defined) {
+			throw new Exception("Argument ".($defined+1)." not expected");
+		}
+	}
+	
+	private function namedSanity() {
+		$defined = $this->model->getArgNames();
+		foreach($defined as $name) {
+			$arg = $this->model->getNamedArg($name);
+			if(!isset($this->availableNamed[$name]) && $arg->isMandatory()) {
+				throw new Exception("mandatory argument --".$name." missing");
+			}
+		}
+		foreach (array_keys($this->availableNamed) as $value) {
+			if(!in_array($value, $defined)) {
+				throw new Exception("argument --".$value." not expected");
+			}
+		}
+	}
+	
+	private function validate() {
+		foreach($this->availablePositional as $pos => $value) {
+			$arg = $this->model->getPositionalArg($pos);
+			if(!$arg->hasValidate()) {
+				continue;
+			}
+			try {
+				$arg->getValidate()->validate($value);
+			} catch (Exception $e) {
+				throw new Exception("argument ".($pos+1)." (".$this->model->getPositionalName($pos)."): ".$e->getMessage());
+			}
+		}
+
+		foreach($this->availableNamed as $name => $value) {
+			$arg = $this->model->getNamedArg($name);
+			if(!$arg->hasValidate()) {
+				continue;
+			}
+			try {
+				$arg->getValidate()->validate($value);
+			} catch (Exception $e) {
+				throw new Exception("--".$name.": ".$e->getMessage());
+			}
+			
+		}
+
+	}
+
+	private function convert() {
+		foreach($this->availablePositional as $pos => $value) {
+			$arg = $this->model->getPositionalArg($pos);
+			if(!$arg->hasConvert()) {
+				continue;
+			}
+			$this->availablePositional[$pos] = $arg->getConvert()->convert($this->availablePositional[$pos]);
+		}
+
+		foreach($this->availableNamed as $name => $value) {
+			$arg = $this->model->getNamedArg($name);
+			if(!$arg->hasConvert()) {
+				continue;
+			}
+			$this->availableNamed[$name] = $arg->getConvert()->convert($this->availableNamed[$name]);
+		}
+	}
+
 	/**
 	 * Checks whether a certain parameter is available or not. A parameter is
 	 * available if it was used by the calling user or if it's ArgModel has a
@@ -101,7 +155,7 @@ class Argv {
 	 * @return bool
 	 */
 	function hasValue($key):bool {
-		return isset($this->argvResult[$key]);
+		return isset($this->availableNamed[$key]);
 	}
 	/**
 	 * Gets the value of a specific parameter. Note that parameters which are
@@ -116,7 +170,18 @@ class Argv {
 		if(!$this->hasValue($key)) {
 			throw new Exception("argument value ".$key." doesn't exist");
 		}
-	return $this->argvResult[$key];
+	return $this->availableNamed[$key];
+	}
+	
+	function hasPositional(int $pos) {
+		return isset($this->availablePositional[$pos]);
+	}
+	
+	function getPositional(int $pos) {
+		if(!$this->hasPositional($pos)) {
+			throw new Exception("positional argument ".$pos." doesn't exist");
+		}
+	return $this->availablePositional[$pos];
 	}
 	
 	/**
@@ -128,9 +193,9 @@ class Argv {
 	 * @throws Exception
 	 */
 	function getBoolean($key):bool {
-		if(!isset($this->boolean[$key])) {
+		if(!in_array($key, $this->model->getBoolean())) {
 			throw new Exception("boolean argument ".$key." is not defined");
 		}
-	return $this->boolean[$key];
+		return in_array($key, $this->availableBoolean);
 	}
 }

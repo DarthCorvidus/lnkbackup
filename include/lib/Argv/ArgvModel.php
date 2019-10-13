@@ -9,15 +9,16 @@
  * Interface for model as expected by Argv.
  */
 interface ArgvModel {
-	/**
-	 * The amount of defined parameters; valued parameters only.
-	 */
-	function getParamCount():int;
-	/**
-	 * Get a specific arg model.
-	 * @param int $arg
-	 */
-	function getArgModel(int $arg): ArgModel;
+	public function getArgNames(): array;
+	
+	public function getNamedArg(string $name): ArgModel;
+
+	public function getPositionalCount(): int;
+	
+	public function getPositionalArg(int $i): ArgModel;
+	
+	public function getPositionalName(int $i): string;
+	
 	/**
 	 * return an array of pure boolean parameters without a value, which will
 	 * evaluate to true if set.
