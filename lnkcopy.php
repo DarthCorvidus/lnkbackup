@@ -10,5 +10,9 @@ include $scriptdir."/include/lib/Loader.php";
 $loader = new Loader($scriptdir."/include/lib");
 $loader->addRepository($scriptdir."/include/local");
 $loader->SplRegister();
-$copyjob = new CopyJob($argv);
-$copyjob->run();
+try {
+	$copyjob = new CopyJob($argv);
+	$copyjob->run();
+} catch (ArgvException $e) {
+	echo $e->getMessage().PHP_EOL;
+}

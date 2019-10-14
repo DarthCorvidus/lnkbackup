@@ -12,16 +12,16 @@ class CopyJob {
 	private $total = 0;
 	private $progress = 1;
 	function __construct(array $array) {
-		if(!isset($array[1])) {
-			throw new Exception("first parameter (source) is missing");
-		}
-		if(!isset($array[2])) {
-			throw new Exception("second parameter (target) is missing");
-		}
-		$this->source = new Backup($array[1]);
-		$this->target = new Backup($array[2]);
 		$model = new ArgvCopy();
+		if(count($array)==1) {
+			$reference = new ArgvReference($model);
+			echo $reference->getReference();
+			die();
+		}
 		$this->argv = new Argv($array, $model);
+		$this->source = new Backup($this->argv->getPositional(0));
+		$this->target = new Backup($this->argv->getPositional(1));
+		
 		$this->filter = new EntryFilter();
 		if($this->argv->hasValue("from")) {
 			$this->filter->setFrom(Date::fromIsodate($this->argv->getValue("from")));
@@ -107,7 +107,7 @@ class CopyJob {
 		//folders copied must be used as well.
 		$max = NULL;
 		$this->total = count($diff);
-		if($this->argv->getValue("max")!=-1) {
+		if($this->argv->hasValue("max")) {
 			$max = (int)$this->argv->getValue("max");
 			$this->total = $max;
 		}
