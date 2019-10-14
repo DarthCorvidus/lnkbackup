@@ -69,7 +69,7 @@ class Argv {
 		$defined = $this->model->getBoolean();
 		foreach($this->availableBoolean as $value) {
 			if(!in_array($value, $defined)) {
-				throw new Exception("unknown boolean parameter --".$value);
+				throw new ArgvException("unknown boolean parameter --".$value);
 			}
 		}
 	}
@@ -78,11 +78,11 @@ class Argv {
 		$defined = $this->model->getPositionalCount();
 		for($i=0;$i<$defined;$i++) {
 			if(!isset($this->availablePositional[$i])) {
-				throw new Exception("Argument ".($i+1)." (".$this->model->getPositionalName($i).") missing");
+				throw new ArgvException("Argument ".($i+1)." (".$this->model->getPositionalName($i).") missing");
 			}
 		}
 		if(count($this->availablePositional)>$defined) {
-			throw new Exception("Argument ".($defined+1)." not expected");
+			throw new ArgvException("Argument ".($defined+1)." not expected");
 		}
 	}
 	
@@ -91,12 +91,12 @@ class Argv {
 		foreach($defined as $name) {
 			$arg = $this->model->getNamedArg($name);
 			if(!isset($this->availableNamed[$name]) && $arg->isMandatory()) {
-				throw new Exception("mandatory argument --".$name." missing");
+				throw new ArgvException("mandatory argument --".$name." missing");
 			}
 		}
 		foreach (array_keys($this->availableNamed) as $value) {
 			if(!in_array($value, $defined)) {
-				throw new Exception("argument --".$value." not expected");
+				throw new ArgvException("argument --".$value." not expected");
 			}
 		}
 	}
@@ -109,8 +109,8 @@ class Argv {
 			}
 			try {
 				$arg->getValidate()->validate($value);
-			} catch (Exception $e) {
-				throw new Exception("argument ".($pos+1)." (".$this->model->getPositionalName($pos)."): ".$e->getMessage());
+			} catch (ValidateException $e) {
+				throw new ArgvException("argument ".($pos+1)." (".$this->model->getPositionalName($pos)."): ".$e->getMessage());
 			}
 		}
 
@@ -121,8 +121,8 @@ class Argv {
 			}
 			try {
 				$arg->getValidate()->validate($value);
-			} catch (Exception $e) {
-				throw new Exception("--".$name.": ".$e->getMessage());
+			} catch (ValidateException $e) {
+				throw new ArgvException("--".$name.": ".$e->getMessage());
 			}
 			
 		}
