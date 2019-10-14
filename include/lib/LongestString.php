@@ -33,17 +33,11 @@ class LongestString {
 	/**
 	 * 
 	 * @param array $array
-	 * @return int
 	 */
-	static function addArray(array $array) {
-		$longest = 0;
+	function addArray(array $array) {
 		foreach($array as $key => $value) {
-			$len = mb_strlen($value, $this->charset);
-			if($len>$longest) {
-				$longest = $len;
-			}
+			$this->addString($value);
 		}
-	return $longest;
 	}
 	
 	/**
