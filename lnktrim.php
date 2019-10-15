@@ -13,6 +13,6 @@ $loader->SplRegister();
 try {
 	$copyjob = new TrimJob($argv);
 	$copyjob->run();
-} catch (InvalidArgumentException $e) {
+} catch (ArgvException $e) {
 	echo $e->getMessage().PHP_EOL;
 }
