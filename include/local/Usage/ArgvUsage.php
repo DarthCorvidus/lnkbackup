@@ -6,26 +6,40 @@
  */
 class ArgvUsage implements ArgvModel {
 	private $args = array();
+	private $positional = array();
+	private $positionalNames = array();
 	function __construct() {
-		$from = new ArgDate("from");
-		$this->args[] = $from;
+		$this->args["from"] = new ArgDate("from");
 		$date = new Date();
-		$to = new ArgDate("to", $date->getDate("Y-m-d"));
-		$this->args[] = $to;
-		$subdir = new ArgString("subdir");
-		$this->args[] = $subdir;
+		$to = new ArgDate();
+		$to->setDefault($date);
+		$this->args["to"] = $to;
+		$this->args["subdir"] = new ArgString();
+		$this->positional[] = new ArgFile();
+		$this->positionalNames[] = "backup";
 	}
-
-	public function getArgModel(int $arg): \ArgModel {
-		return $this->args[$arg];
-	}
-
 	public function getBoolean(): array {
 		return array("daily", "weekly", "monthly", "yearly");
 	}
 
-	public function getParamCount(): int {
-		return count($this->args);
+	public function getArgNames(): array {
+		return array_keys($this->args);
+	}
+
+	public function getNamedArg(string $name): \ArgModel {
+		return $this->args[$name];
+	}
+
+	public function getPositionalArg(int $i): \ArgModel {
+		return $this->positional[$i];
+	}
+
+	public function getPositionalCount(): int {
+		return count($this->positional);
+	}
+
+	public function getPositionalName(int $i): string {
+		return $this->positionalNames[$i];
 	}
 
 }

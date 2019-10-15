@@ -5,13 +5,24 @@ class Usage {
 	private $filter;
 	private $subdir;
 	function __construct(array $argv) {
-		$this->backup = new Backup($argv[1]);
 		$model = new ArgvUsage();
+		if(count($argv)==1) {
+			$reference = new ArgvReference($model);
+			echo $reference->getReference();
+			die();
+		}
 		$this->argv = new Argv($argv, $model);
+		$this->backup = new Backup($this->argv->getPositional(0));
 		$this->filter = new EntryFilter();
 		if($this->argv->hasValue("subdir")) {
 			$this->filter->setSubdir($this->argv->getValue("subdir"));
 			$this->subdir = $this->argv->getValue("subdir");
+		}
+		if($this->argv->hasValue("from")) {
+			$this->filter->setTo(Date::fromIsodate($this->argv->getValue("from")));
+		}
+		if($this->argv->hasValue("to")) {
+			$this->filter->setTo(Date::fromIsodate($this->argv->getValue("to")));
 		}
 		if($this->argv->getBoolean("daily")) {
 			$this->filter->addPeriod(BackupEntry::DAILY);
