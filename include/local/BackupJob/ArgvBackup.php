@@ -6,21 +6,35 @@
  */
 class ArgvBackup implements ArgvModel {
 	private $args;
+	private $positional;
+	private $positionalNames;
 	function __construct() {
-		$forceDate = new ArgDate("force-date", date("Y-m-d"));
-		$this->args[] = $forceDate;
+		$this->args["force-date"] = new ArgDate();
+		$this->args["force-date"]->setDefault(date("Y-m-d"));
+		$this->positional[] = new ArgFile();
+		$this->positionalNames[] = "config";
 	}
-	
-	public function getArgModel(int $arg): ArgModel {
-		return $this->args[$arg];
-	}
-
-	public function getParamCount(): int {
-		return count($this->args);
-	}
-
 	public function getBoolean(): array {
 		return array();
 	}
 
+	public function getArgNames(): array {
+		return array_keys($this->args);
+	}
+
+	public function getNamedArg(string $name): \ArgModel {
+		return $this->args[$name];
+	}
+
+	public function getPositionalArg(int $i): \ArgModel {
+		return $this->positional[$i];
+	}
+
+	public function getPositionalCount(): int {
+		return count($this->positional);
+	}
+
+	public function getPositionalName(int $i): string {
+		return $this->positionalNames[$i];
+	}
 }
