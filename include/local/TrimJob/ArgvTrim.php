@@ -6,41 +6,48 @@
  */
 class ArgvTrim implements ArgvModel {
 	private $args = array();
+	private $positional = array();
+	private $positionalNames = array();
 	function __construct() {
-		$max = new ArgString("max", 0);
-		$max->setValidate(new ValidateInteger());
-		$this->args[] = $max;
-		$from = new ArgDate("from");
-		$this->args[] = $from;
+		$this->args["max"] = new ArgString();
+		$this->args["max"]->setValidate(new ValidateInteger());
+		$this->args["from"] = new ArgDate();
+		$this->args["to"] = new ArgDate();
 		$date = new Date();
-		$to = new ArgDate("to", $date->getDate("Y-m-d"));
-		$this->args[] = $to;
-		$days = new ArgString("days", -1);
-		$days->setValidate(new ValidateInteger());
-		$this->args[] = $days;
-		$weeks = new ArgString("weeks", -1);
-		$weeks->setValidate(new ValidateInteger());
-		$this->args[] = $weeks;
-		$months = new ArgString("months", -1);
-		$months->setValidate(new ValidateInteger());
-		$this->args[] = $months;
-		$years = new ArgString("years", -1);
-		$years->setValidate(new ValidateInteger());
-		$this->args[] = $years;
-		$subdir = new ArgString("subdir");
-		$this->args[] = $subdir;
-	}
-
-	public function getArgModel(int $arg): \ArgModel {
-		return $this->args[$arg];
+		$this->args["to"]->setDefault($date->getDate("Y-m-d"));
+		$amount = new ArgString();
+		$amount->setValidate(new ValidateInteger());
+		$this->args["days"] = $amount;
+		$this->args["weeks"] = $amount;
+		$this->args["months"] = $amount;
+		$this->args["years"] = $amount;
+		$this->args["subdir"] = new ArgString();
+		$this->positional[] = new ArgFile();
+		$this->positionalNames[] = "backup";
 	}
 
 	public function getBoolean(): array {
 		return array("run");
 	}
 
-	public function getParamCount(): int {
-		return count($this->args);
+	public function getArgNames(): array {
+		return array_keys($this->args);
+	}
+
+	public function getNamedArg(string $name): \ArgModel {
+		return $this->args[$name];
+	}
+
+	public function getPositionalArg(int $i): \ArgModel {
+		return $this->positional[$i];
+	}
+
+	public function getPositionalCount(): int {
+		return count($this->positional);
+	}
+
+	public function getPositionalName(int $i): string {
+		return $this->positionalNames[$i];
 	}
 
 }

@@ -14,6 +14,11 @@ class TrimJob {
 	private $subdir;
 	function __construct(array $argv) {
 		$model = new ArgvTrim();
+		if(count($argv)==1) {
+			$reference = new ArgvReference($model);
+			echo $reference->getReference();
+			die();
+		}
 		$this->args = new Argv($argv, $model);
 		$this->backup = new Backup($argv[1]);
 		$this->filter = new EntryFilter();
@@ -33,10 +38,10 @@ class TrimJob {
 	}
 	
 	private function addDays(BackupEntry $entry, array $delete): array {
-		if($this->args->getValue("max")>0 && count($delete)>=$this->args->getValue("max")) {
+		if($this->args->hasValue("max") && count($delete)>=$this->args->getValue("max")) {
 			return $delete;
 		}
-		if($this->args->getValue("days")<0) {
+		if(!$this->args->hasValue("days")) {
 			return $delete;
 		}
 		if($entry->getPeriod()!= BackupEntry::DAILY) {
@@ -53,10 +58,10 @@ class TrimJob {
 	}
 
 	private function addDelete(BackupEntry $entry, array $delete, string $param): array {
-		if($this->args->getValue("max")>0 && count($delete)>=$this->args->getValue("max")) {
+		if($this->args->hasValue("max") && count($delete)>=$this->args->getValue("max")) {
 			return $delete;
 		}
-		if($this->args->getValue($param)<0) {
+		if(!$this->args->hasValue($param)) {
 			return $delete;
 		}
 		if($entry->getPeriod()!= $this->paramConst[$param][0]) {
