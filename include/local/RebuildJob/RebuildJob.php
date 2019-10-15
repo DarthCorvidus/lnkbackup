@@ -11,8 +11,13 @@ class RebuildJob {
 	private $i = 0;
 	function __construct(array $argv) {
 		$model = new ArgvRebuild();
+		if(count($argv)==1) {
+			$reference = new ArgvReference($model);
+			echo $reference->getReference();
+			die();
+		}
 		$this->argv = new Argv($argv, $model);
-		$this->backup = new Backup($argv[1]);
+		$this->backup = new Backup($this->argv->getPositional(0));
 		if($this->argv->getBoolean("weekly")) {
 			$this->rebuild[] = BackupEntry::WEEKLY;
 		}
@@ -46,7 +51,7 @@ class RebuildJob {
 	}
 	
 	private function rebuild(string $period, BackupEntry $entry): bool {
-		if($this->argv->getValue("max")>=0 && $this->i==$this->argv->getValue("max")) {
+		if($this->argv->hasValue("max") && $this->i==$this->argv->getValue("max")) {
 			return false;
 		}
 		$target = $this->backup->getLocation()."/".$entry->getBasename().".".$period;
@@ -76,7 +81,7 @@ class RebuildJob {
 			 * Therefore, progress is tracked globally and checked within
 			 * rebuild() as well.
 			 */
-			if($this->argv->getValue("max")>=0 && $this->i==$this->argv->getValue("max")) {
+			if($this->argv->hasValue("max") && $this->i==$this->argv->getValue("max")) {
 				break;
 			}
 			$entry = $entries->getEntry($i);

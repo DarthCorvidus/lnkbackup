@@ -13,6 +13,6 @@ $loader->SplRegister();
 try {
 	$rbjob = new RebuildJob($argv);
 	$rbjob->run();
-} catch (InvalidArgumentException $e) {
+} catch (ArgvException $e) {
 	echo $e->getMessage().PHP_EOL;
 }
