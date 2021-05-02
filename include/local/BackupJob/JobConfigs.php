@@ -11,12 +11,12 @@ class JobConfigs {
 			throw new Exception("file or folder ".$file." does not exist.");
 		}
 		if(is_file($file)) {
-			$this->jobs[] = new JobConfig($file);
+			$this->jobs[] = JobConfig::fromFile($file);
 			return;
 		}
 		foreach(glob($file."/*.conf") as $value) {
 			try {
-				$config = new JobConfig($value);
+				$config = JobConfig::fromFile($value);
 				$this->jobs[] = $config;
 			} catch(Exception $e) {
 				echo "Error in ".$value.": ".$e->getMessage().PHP_EOL;

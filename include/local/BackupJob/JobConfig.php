@@ -8,17 +8,36 @@ class JobConfig {
 	private $target;
 	private $source;
 	private $exclude;
-	function __construct($file) {
-		$parse = parse_ini_file($file);
-		$this->source = $parse["source"];
-		$this->target = $parse["target"];
-		if(empty($parse["exclude"])) {
-			return;
+	private function __construct() {
+		#$parse = parse_ini_file($file);
+		#$this->source = $parse["source"];
+		#$this->target = $parse["target"];
+		#if(empty($parse["exclude"])) {
+		#	return;
+		#}
+		#if(!file_exists($parse["exclude"])) {
+		#	throw new Exception("exclude file ".$parse["exclude"]." does not exist");
+		#}
+		#$this->exclude = $parse["exclude"];
+	}
+	
+	static function fromArray(array $array): JobConfig {
+		$config = new JobConfig();
+		$config->source = $array["source"];
+		$config->target = $array["target"];
+		if(!isset($array["exclude"])) {
+			return $config;
 		}
-		if(!file_exists($parse["exclude"])) {
-			throw new Exception("exclude file ".$parse["exclude"]." does not exist");
+		if(!file_exists($array["exclude"])) {
+			throw new Exception("exclude file ".$array["exclude"]." does not exist");
 		}
-		$this->exclude = $parse["exclude"];
+		$config->exclude = $array["exclude"];
+	return $config;
+	}
+	
+	static function fromFile($filename): JobConfig {
+		$array = parse_ini_file($filename);
+	return self::fromArray($array);
 	}
 	
 	function getSource():string {
