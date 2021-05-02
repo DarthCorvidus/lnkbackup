@@ -1,0 +1,42 @@
+{
+	"minimum-stability": "dev",
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-validate"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-convert"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-assert"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-longeststring"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-argv"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-juliandate"
+		}
+
+	],
+	"name": "lnkbackup/lnkbackup",
+	"require": {
+			"plibv4/convert": "dev-main",
+			"plibv4/validate": "dev-main",
+			"plibv4/longeststring": "dev-main",
+			"plibv4/argv": "dev-main",
+			"plibv4/juliandate": "dev-main"
+	},
+	"autoload": {
+        "classmap": ["src/"]
+    }
+
+}
