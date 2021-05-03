@@ -14,6 +14,7 @@ class Loader {
 	private $indexFile = NULL;
 	private $stat = array();
 	private $veto = array();
+	private $silent = FALSE;
 	/**
 	 * @param string a valid path  
 	 */
@@ -23,6 +24,11 @@ class Loader {
 			throw new Exception("directory given to ".__CLASS__." does not exist or is not a directory");
 		}
 	}
+	
+	function silent() {
+		$this->silent = TRUE;
+	}
+	
 	/**
 	 * path to a file that will store the index
 	 * 
@@ -135,7 +141,7 @@ class Loader {
 	 * @param string name of the class 
 	 */
 	function load($class) {
-		if(!$this->request($class)) {
+		if(!$this->request($class) && $this->silent===FALSE) {
 			throw new Exception("class ".$class." is nowhere to be found");
 		}
 	}
