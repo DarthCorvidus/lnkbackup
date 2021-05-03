@@ -21,7 +21,7 @@ class BackupEntry {
 			return;
 		}
 		if(!in_array($exp[1], array(self::WEEKLY, self::MONTHLY, self::YEARLY))) {
-			throw new Exception();
+			throw new InvalidArgumentException("invalid period ".$exp[1]." for entry ".basename($path));
 		}
 		$this->type = $exp[1];
 	}
