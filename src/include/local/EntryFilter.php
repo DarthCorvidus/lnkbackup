@@ -4,6 +4,14 @@
  * @author Claus-Christoph Küthe <lnkbackup@vm01.telton.de>
  * @license GPLv3
  */
+
+/**
+ * Entry Filter
+ * 
+ * Match an instance of BackupEntry against a set of conditions. Conditions are
+ * linked together via AND, ie every condition has to match. Undefined
+ * conditions are ignored.
+ */
 class EntryFilter {
 	private $period;
 	private $periods = array();
@@ -64,7 +72,8 @@ class EntryFilter {
 	/**
 	 * Match
 	 * 
-	 * Check if a BackupEntry matches.
+	 * Check if a BackupEntry matches. Evaluates to FALSE if one condition is
+	 * not met. Undefined conditions won't be taken into account.
 	 * @param BackupEntry $entry
 	 * @return boolean
 	 */
