@@ -5,7 +5,7 @@
  * @license GPLv3
  */
 class Backup {
-	private $daily = array();
+	private $dailyCount = 0;
 	private $all;
 	private $location;
 	function __construct(string $location) {
@@ -20,7 +20,7 @@ class Backup {
 	
 	function refresh() {
 		$this->all = new EntryCollection();
-		$this->daily = array();
+		$this->dailyCount = 0;
 		foreach(glob($this->location."/*") as $key => $value) {
 			if(!is_dir($value)) {
 				continue;
@@ -33,7 +33,7 @@ class Backup {
 			}
 			$this->all->addEntry($current);
 			if($current->isDaily()) {
-				$this->daily[] = $current;
+				$this->dailyCount++;
 			}
 		}
 	}
@@ -59,7 +59,7 @@ class Backup {
 	}
 	
 	public function getDailyCount():int {
-		return count($this->daily);
+		return $this->dailyCount;
 	}
 	
 	public function isEmpty():bool {
