@@ -99,7 +99,7 @@ class BackupJob {
 			return;
 		}
 		
-		$latest = $this->backup->getLatest()->getPath();
+		$latest = realpath($this->backup->getLatest()->getPath());
 		$temp = $this->config->getTarget()."/temp.create";
 		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
 		$source = $this->config->getSource();
