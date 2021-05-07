@@ -5,7 +5,7 @@
  * @license GPLv3
  */
 class JobConfigs {
-	private $jobs;
+	private $jobs = array();
 	function __construct($file) {
 		if(!file_exists($file)) {
 			throw new Exception("file or folder ".$file." does not exist.");

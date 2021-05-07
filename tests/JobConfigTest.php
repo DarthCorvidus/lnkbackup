@@ -8,7 +8,7 @@ class JobConfigTest extends TestCase {
 	}
 	
 	function testFromFile() {
-		$job = JobConfig::fromFile(__DIR__."/conf.d/local.ini");
+		$job = JobConfig::fromFile(__DIR__."/conf.d/local.conf");
 		$this->assertInstanceOf(JobConfig::class, $job);
 	}
 	
