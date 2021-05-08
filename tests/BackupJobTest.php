@@ -2,6 +2,15 @@
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 class BackupJobTest extends TestCase {
+	/**
+	 * Test backup to empty
+	 * 
+	 * Test backing up to an empty folder, using --force-date to simulate
+	 * several daily runs. Test if every expected folder is created accordingly.
+	 * When calling a job on an empty directory, the first Job must not use
+	 * --link-dest.
+	 * 
+	 */
 	function testBackupToEmpty() {
 		$dates = array("2010-01-01", "2010-01-02", "2010-01-03");
 		$target = array("2010-01-01", "2010-01-01.monthly", "2010-01-01.yearly", "2010-01-02", "2010-01-03", "2010-01-03.weekly");
@@ -32,6 +41,13 @@ class BackupJobTest extends TestCase {
 		
 	}
 	
+	/**
+	 * Test Backup to same empty
+	 * 
+	 * Assume that a job was called on an empty target directory and only one
+	 * value was copied over. If called again, lnkbackup should only look for
+	 * differences instead, using --delete, without using --link-dest.
+	 */
 	function testBackupToSameEmpty() {
 		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-01"));
 		$argv = array();
@@ -47,6 +63,11 @@ class BackupJobTest extends TestCase {
 		$backup->execute();
 	}
 	
+	/**
+	 * Test Backup To Same Filled
+	 * 
+	 * Same as above, but with using --link-dest.
+	 */
 	function testBackupToSameFilled() {
 		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-01"));
 		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-02"));
