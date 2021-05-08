@@ -15,7 +15,7 @@ class ArgvBackup implements ArgvModel {
 		$this->positionalNames[] = "config";
 	}
 	public function getBoolean(): array {
-		return array();
+		return array("silent");
 	}
 
 	public function getArgNames(): array {
