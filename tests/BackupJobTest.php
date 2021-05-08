@@ -15,11 +15,56 @@ class BackupJobTest extends TestCase {
 			$args = new Argv($argv, $model);
 			$config = JobConfig::fromFile(__DIR__."/conf.d/local-empty.conf");
 			$backup = new BackupJob($config, $args);
+			$this->expectOutputString("");
 			$backup->execute();
 		}
 		foreach($target as $value) {
 			$this->assertFileExists(__DIR__."/target.empty/".$value);
-			exec("rm -r ".escapeshellarg(__DIR__."/target.empty/".$value));
 		}
 	}
+	
+	function tearDown() {
+		foreach(glob(__DIR__."/target.empty/*") as $value) {
+			if(is_dir($value)) {
+				exec("rm -r ".escapeshellarg($value));
+			}
+		}
+		
+	}
+	
+	function testBackupToSameEmpty() {
+		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-01"));
+		$argv = array();
+		$argv[] = "lnkbackup.php";
+		$argv[] = __DIR__."/conf.d/local-empty.conf";
+		$argv[] = "--force-date=2010-01-01";
+		$argv[] = "--silent";
+		$model = new ArgvBackup();
+		$args = new Argv($argv, $model);
+		$config = JobConfig::fromFile(__DIR__."/conf.d/local-empty.conf");
+		$backup = new BackupJob($config, $args);
+		$this->expectOutputString("");
+		$backup->execute();
+	}
+	
+	function testBackupToSameFilled() {
+		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-01"));
+		exec("mkdir ".escapeshellarg(__DIR__."/target.empty/2010-01-02"));
+		exec("touch ".escapeshellarg(__DIR__."/target.empty/2010-01-02/file02.txt"));
+		$argv = array();
+		$argv[] = "lnkbackup.php";
+		$argv[] = __DIR__."/conf.d/local-empty.conf";
+		$argv[] = "--force-date=2010-01-02";
+		$argv[] = "--silent";
+		$model = new ArgvBackup();
+		$args = new Argv($argv, $model);
+		$config = JobConfig::fromFile(__DIR__."/conf.d/local-empty.conf");
+		$backup = new BackupJob($config, $args);
+		$this->expectOutputString("");
+		$backup->execute();
+		$this->assertFileExists(__DIR__."/target.empty/2010-01-02/subdir");
+		$this->assertFileExists(__DIR__."/target.empty/2010-01-02/file.txt");
+		$this->assertEquals(FALSE, file_exists(__DIR__."/target.empty/2010-01-02/file02.txt"));
+	}
+
 }

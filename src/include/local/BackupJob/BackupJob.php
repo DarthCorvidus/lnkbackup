@@ -8,10 +8,26 @@ class BackupJob {
 	private $date;
 	private $config;
 	private $backup;
+	private $silent;
 	function __construct(JobConfig $config, Argv $arg) {
 		$this->config = $config;
+		$this->silent = $arg->getBoolean("silent");
 		$this->date = Date::fromIsodate($arg->getValue("force-date"));
 		$this->backup = new Backup($this->config->getTarget());
+	}
+	
+	private function silence(Command $command) {
+		var_dump($this->silent);
+		if(!$this->silent) {
+			$command->showCommand();
+			$command->showOutput();
+		}
+	}
+	
+	private function addExclude(Command $rsyncCommand) {
+		if($this->config->hasExclude()) {
+			$rsyncCommand->addParameter("--exclude-from", $this->config->getExclude());
+		}
 	}
 	
 	static function exec(string $command, $prefix = NULL) {
@@ -30,24 +46,36 @@ class BackupJob {
 			throw new Exception("parameter \$copy is empty or /, this should never happen!");
 		}
 		if(file_exists($copy)) {
-			$command = "rm ".escapeshellarg($copy)." -rf";
-			echo $command.PHP_EOL;
-			self::exec($command);
+			$rm = new Command("mv");
+			$this->silence($rm);
+			$rm->addParameter($copy);
+			$rm->addParameter("-rf");
+			#$command = "rm ".escapeshellarg($copy)." -rf";
+			#echo $command.PHP_EOL;
+			#self::exec($command);
 		}
 	}
 	
 	private function copyPeriodic(string $suffix) {
-		$temp = $this->config->getTarget()."/temp";
-		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
-		$this->removeCopy($temp.".".$suffix);
-		$this->removeCopy($final.".".$suffix);
-		$command = "cp ".escapeshellarg($final)." ".escapeshellarg($temp.".".$suffix)." -al";
-		echo $command.PHP_EOL;
-		self::exec($command);
+		$source = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
+		$temp = $this->config->getTarget()."/temp.".$suffix;
+		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d").".".$suffix;
+		
+		$this->removeCopy($temp);
+		$this->removeCopy($final);
 
-		$command = "mv ".escapeshellarg($temp.".".$suffix)." ".escapeshellarg($final.".".$suffix);
-		echo $command.PHP_EOL;
-		self::exec($command);
+		$cp = new Command("cp");
+		$this->silence($cp);
+		$cp->addParameter($source);
+		$cp->addParameter($temp);
+		$cp->addParameter("-al");
+		$cp->exec();
+		
+		$mv = new Command("mv");
+		$this->silence($mv);
+		$mv->addParameter($temp);
+		$mv->addParameter($final);
+		$mv->exec();
 	}
 	
 	private function copyWMY(string $final) {
@@ -72,17 +100,42 @@ class BackupJob {
 		}
 
 		if(!file_exists($final)) {
-			$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." ".$exclude." -avz --delete";
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
-			$command = "mv ".$temp." ".$final;
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+
+			$rsync->addParameter($source);
+			$rsync->addParameter($temp);
+			$this->addExclude($rsync);
+			$rsync->addParameter("-avz");
+			$rsync->addParameter("--delete");
+			$rsync->exec();
+			
+			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." ".$exclude." -avz --delete";
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
+	
+			$mv = new Command("mv");
+			$this->silence($mv);
+			$mv->addParameter($temp);
+			$mv->addParameter($final);
+			$mv->exec();
+
+			#$command = "mv ".$temp." ".$final;
+			#echo $command.PHP_EOL;
 			$this->copyWMY($final);
 		} else {
-			$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." ".$exclude." -avz --delete";
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+			$rsync->addParameter($source);
+			$rsync->addParameter($final);
+			$this->addExclude($rsync);
+			$rsync->addParameter("-avz");
+			$rsync->addParameter("--delete");
+			$rsync->exec();
+			
+			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." ".$exclude." -avz --delete";
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
 			$this->copyWMY($final);
 		}
 		
@@ -108,18 +161,42 @@ class BackupJob {
 			$exclude = "--exclude-from=".escapeshellarg($this->config->getExclude());
 		}
 		if(!file_exists($final)) {
-			$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." --link-dest=".escapeshellarg($latest)." ".$exclude." -avz --delete";
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
-			$command = "mv ".$temp." ".$final;
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+			$rsync->addParameter($source);
+			$rsync->addParameter($temp);
+			$rsync->addParameter("--link-dest", $latest);
+			$this->addExclude($rsync);
+			$rsync->addParameter("-avz");
+			$rsync->addParameter("--delete");
+			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." --link-dest=".escapeshellarg($latest)." ".$exclude." -avz --delete";
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
+			$rsync->exec();
+			
+			$mv = new Command("mv");
+			$this->silence($mv);
+			$mv->addParameter($temp);
+			$mv->addParameter($final);
+			$mv->exec();
+			#$command = "mv ".$temp." ".$final;
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
 			$this->copyWMY($final);
 		} else {
-			$latestPrevious = $this->backup->getLatestPrevious()->getPath();
-			$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." --link-dest=".escapeshellarg($latestPrevious)." ".$exclude." -avz --delete";
-			echo $command.PHP_EOL;
-			BackupJob::exec($command);
+			$latestPrevious = realpath($this->backup->getLatestPrevious()->getPath());
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+			$rsync->addParameter($source);
+			$rsync->addParameter($final);
+			$rsync->addParameter("--link-dest", $latestPrevious);
+			$this->addExclude($rsync);
+			$rsync->addParameter("-avz");
+			$rsync->addParameter("--delete");
+			$rsync->exec();
+			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." --link-dest=".escapeshellarg($latestPrevious)." ".$exclude." -avz --delete";
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
 			$this->copyWMY($final);
 		}
 	}

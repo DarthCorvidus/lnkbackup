@@ -24,7 +24,12 @@
 		{
 			"type": "vcs",
 			"url": "https://github.com/DarthCorvidus/plibv4-juliandate"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-command"
 		}
+
 
 	],
 	"name": "lnkbackup/lnkbackup",
@@ -33,7 +38,8 @@
 			"plibv4/validate": "dev-main",
 			"plibv4/longeststring": "dev-main",
 			"plibv4/argv": "dev-main",
-			"plibv4/juliandate": "dev-main"
+			"plibv4/juliandate": "dev-main",
+			"plibv4/command": "dev-main"
 	},
 	"autoload": {
         "classmap": ["src/"]
