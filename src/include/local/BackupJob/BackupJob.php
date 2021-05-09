@@ -94,66 +94,19 @@ class BackupJob {
 	return $commands;
 	}
 	
-	function executeEmpty() {
+	/**
+	 * Get Backup On Empty Commands
+	 * 
+	 * Get all commands necessary to backup on either a fresh directory or
+	 * a directory that already has a directory of the current date / forced
+	 * date.
+	 * @return array
+	 */
+	function getBackupOnEmptyCommands(): array {
 		$commands = array();
 		$temp = $this->config->getTarget()."/temp.create";
 		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
 		$source = $this->config->getSource();
-		$exclude = NULL;
-		if($this->config->hasExclude()) {
-			$exclude = "--exclude-from=".escapeshellarg($this->config->getExclude());
-		}
-
-		if(!file_exists($final)) {
-			$rsync = new Command("rsync");
-			$this->silence($rsync);
-
-			$rsync->addParameter($source);
-			$rsync->addParameter($temp);
-			$this->addExclude($rsync);
-			$rsync->addParameter("-avz");
-			$rsync->addParameter("--delete");
-			$rsync->exec();
-			
-			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." ".$exclude." -avz --delete";
-			#echo $command.PHP_EOL;
-			#BackupJob::exec($command);
-	
-			$mv = new Command("mv");
-			$this->silence($mv);
-			$mv->addParameter($temp);
-			$mv->addParameter($final);
-			$mv->exec();
-
-			#$command = "mv ".$temp." ".$final;
-			#echo $command.PHP_EOL;
-			$commands = array_merge($commands, $this->getCopyWMY($final));
-		} else {
-			$rsync = new Command("rsync");
-			$this->silence($rsync);
-			$rsync->addParameter($source);
-			$rsync->addParameter($final);
-			$this->addExclude($rsync);
-			$rsync->addParameter("-avz");
-			$rsync->addParameter("--delete");
-			$rsync->exec();
-			
-			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." ".$exclude." -avz --delete";
-			#echo $command.PHP_EOL;
-			#BackupJob::exec($command);
-			$commands = array_merge($commands, $this->getCopyWMY($final));
-		}
-		foreach($commands as $value) {
-			$value->exec();
-		}
-	}
-	
-	function getEmptyCommands(): array {
-		$commands = array();
-		$temp = $this->config->getTarget()."/temp.create";
-		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
-		$source = $this->config->getSource();
-		$exclude = NULL;
 		if(!file_exists($final)) {
 			$rsync = new Command("rsync");
 			$this->silence($rsync);
@@ -184,18 +137,22 @@ class BackupJob {
 			$rsync->addParameter("--delete");
 			$commands[] = $rsync;
 		}
-	return $commands;
+	return array_merge($commands, $this->getCopyWMY($final));
 	}
 	
 	function execute() {
 		$commands = array();
 		if($this->backup->isEmpty()) {
-			$this->executeEmpty();
+			foreach($this->getBackupOnEmptyCommands() as $value) {
+				$value->exec();
+			}
 			return;
 		}
 
 		if($this->backup->getDailyCount()==1 && $this->backup->getLatest()->getDate()->getNumeric()==$this->date->getNumeric()) {
-			$this->executeEmpty();
+			foreach($this->getBackupOnEmptyCommands() as $value) {
+				$value->exec();
+			}
 			return;
 		}
 		

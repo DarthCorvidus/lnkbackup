@@ -124,7 +124,7 @@ class BackupJobTest extends TestCase {
 		$job = $this->getBackupJob("2010-01-01");
 		$expected[] = implode(" ", $command);
 		$expected[] = "mv ".escapeshellarg("tests/target.empty//temp.create")." ".escapeshellarg("tests/target.empty//2010-01-01");
-		$commands = $job->getEmptyCommands();
+		$commands = $job->getBackupOnEmptyCommands();
 		$this->assertEquals($expected[0], $commands[0]->buildCommand());
 		$this->assertEquals($expected[1], $commands[1]->buildCommand());
 	}
@@ -146,7 +146,7 @@ class BackupJobTest extends TestCase {
 		$command[] = escapeshellarg("--delete");
 		$job = $this->getBackupJob("2010-01-01");
 		$expected[] = implode(" ", $command);
-		$commands = $job->getEmptyCommands();
+		$commands = $job->getBackupOnEmptyCommands();
 		$this->assertEquals($expected[0], $commands[0]->buildCommand());
 	}
 	
