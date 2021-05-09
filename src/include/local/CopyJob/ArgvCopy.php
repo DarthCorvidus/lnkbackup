@@ -41,6 +41,6 @@ class ArgvCopy implements ArgvModel {
 	}
 	
 	public function getBoolean(): array {
-		return array("run", "daily", "weekly", "monthly", "yearly", "progress", "silent");
+		return array("run", "daily", "weekly", "monthly", "yearly", "progress");
 	}
 }

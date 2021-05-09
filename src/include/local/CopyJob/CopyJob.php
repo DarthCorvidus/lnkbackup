@@ -68,24 +68,38 @@ class CopyJob {
 		$paramRS[] = escapeshellarg($targetTemp);
 		$paramRS[] = "--delete";
 		$paramRS[] = "-avz";
+		$rsync = new Command("rsync");
+		$rsync->addParameter($sourcePath);
+		$rsync->addParameter($targetTemp);
+		
 		if($link) {
 			$linkDest = $this->target->getLocation()."/".$this->target->getLatest()->getBasename()."/";
+			$rsync->addParameter("--link-dest", $linkDest);
 			$paramRS[] = "--link-dest=".escapeshellarg($linkDest);
 		}
-		$rsync = "rsync ".implode(" ", $paramRS);
-		echo $rsync.PHP_EOL;
+		#$rsync = "rsync ".implode(" ", $paramRS);
+		#echo $rsync.PHP_EOL;
 		if($this->argv->getBoolean("progress")) {
-			BackupJob::exec($rsync, $sourceBasename." (".$this->progress."/".$this->total.")");
-		} else {
-			BackupJob::exec($rsync);
+			$rsync->setPrefix($sourceBasename." (".$this->progress."/".$this->total.")");
 		}
+		#if($this->argv->getBoolean("progress")) {
+		#	BackupJob::exec($rsync, $sourceBasename." (".$this->progress."/".$this->total.")");
+		#} else {
+		#	BackupJob::exec($rsync);
+		#}
+		$rsync->exec();
+		
+		$mv = new Command("mv");
+		$mv->addParameter($targetTemp);
+		$mv->addParameter($targetFinal);
+		$mv->exec();
 		
 		$paramMV[] = escapeshellarg($targetTemp);
 		$paramMV[] = escapeshellarg($targetFinal);
-		$mv = "mv ".implode(" ", $paramMV);
-		echo $mv.PHP_EOL;
-		BackupJob::exec($mv);
-		$this->progress++;
+		#$mv = "mv ".implode(" ", $paramMV);
+		#echo $mv.PHP_EOL;
+		#BackupJob::exec($mv);
+		#$this->progress++;
 	}
 			
 	function run() {

@@ -22,7 +22,6 @@ class ArgvCopyTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--progress";
 		$array[] = "--run";
-		$array[] = "--silent";
 		
 		$argv = new Argv($array, $model);
 		
@@ -35,7 +34,6 @@ class ArgvCopyTest extends TestCase {
 		$this->assertEquals(TRUE, $argv->getBoolean("weekly"));
 		$this->assertEquals(TRUE, $argv->getBoolean("monthly"));
 		$this->assertEquals(TRUE, $argv->getBoolean("yearly"));
-		$this->assertEquals(TRUE, $argv->getBoolean("silent"));
 	}
 	
 	function testInvalidSource() {
