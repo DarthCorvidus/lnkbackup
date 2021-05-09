@@ -78,7 +78,7 @@ class BackupJob {
 	return $array;
 	}
 	
-	private function copyWMY(string $final) {
+	function getCopyWMY(string $final): array {
 		$commands = array();
 		if($this->date->getDate("N")==7) {
 			$commands = array_merge($commands, $this->getCopyPeriodic("weekly"));
@@ -89,13 +89,11 @@ class BackupJob {
 		if($this->date->getDate("m-d")==="01-01") {
 			$commands = array_merge($commands, $this->getCopyPeriodic("yearly"));
 		}
-		
-		foreach($commands as $value) {
-			$value->exec();
-		}
+	return $commands;
 	}
 	
 	function executeEmpty() {
+		$commands = array();
 		$temp = $this->config->getTarget()."/temp.create";
 		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
 		$source = $this->config->getSource();
@@ -127,7 +125,7 @@ class BackupJob {
 
 			#$command = "mv ".$temp." ".$final;
 			#echo $command.PHP_EOL;
-			$this->copyWMY($final);
+			$commands = array_merge($commands, $this->getCopyWMY($final));
 		} else {
 			$rsync = new Command("rsync");
 			$this->silence($rsync);
@@ -141,9 +139,11 @@ class BackupJob {
 			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." ".$exclude." -avz --delete";
 			#echo $command.PHP_EOL;
 			#BackupJob::exec($command);
-			$this->copyWMY($final);
+			$commands = array_merge($commands, $this->getCopyWMY($final));
 		}
-		
+		foreach($commands as $value) {
+			$value->exec();
+		}
 	}
 	
 	function getEmptyCommands(): array {
@@ -186,6 +186,7 @@ class BackupJob {
 	}
 	
 	function execute() {
+		$commands = array();
 		if($this->backup->isEmpty()) {
 			$this->executeEmpty();
 			return;
@@ -226,7 +227,7 @@ class BackupJob {
 			#$command = "mv ".$temp." ".$final;
 			#echo $command.PHP_EOL;
 			#BackupJob::exec($command);
-			$this->copyWMY($final);
+			$commands = array_merge($commands, $this->getCopyWMY($final));
 		} else {
 			$latestPrevious = realpath($this->backup->getLatestPrevious()->getPath());
 			$rsync = new Command("rsync");
@@ -241,7 +242,11 @@ class BackupJob {
 			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($final)." --link-dest=".escapeshellarg($latestPrevious)." ".$exclude." -avz --delete";
 			#echo $command.PHP_EOL;
 			#BackupJob::exec($command);
-			$this->copyWMY($final);
+			$commands = array_merge($commands, $this->getCopyWMY($final));
 		}
+		foreach($commands as $value) {
+			$value->exec();
+		}
+
 	}
 }
