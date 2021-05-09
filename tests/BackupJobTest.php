@@ -150,4 +150,11 @@ class BackupJobTest extends TestCase {
 		$this->assertEquals($expected[0], $commands[0]->buildCommand());
 	}
 	
+	function testRemoveCopy() {
+		$file = __DIR__."/target.empty/2010-01-01.monthly";
+		exec("mkdir ". escapeshellarg($file));
+		$job = $this->getBackupJob("2010-01-01");
+		$command = $job->removeCopy($file);
+		$this->assertEquals(FALSE, file_exists($file));
+	}
 }

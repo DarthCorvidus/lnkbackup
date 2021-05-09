@@ -40,19 +40,17 @@ class BackupJob {
 		fclose($handle);
 	}
 	
-	private function removeCopy($copy) {
+	function removeCopy(string $copy) {
 		if(trim($copy)=="" || trim($copy)=="/") {
 			throw new Exception("parameter \$copy is empty or /, this should never happen!");
 		}
+		
 		if(file_exists($copy)) {
 			$rm = new Command("rm");
 			$this->silence($rm);
 			$rm->addParameter($copy);
 			$rm->addParameter("-rf");
 			$rm->exec();
-			#$command = "rm ".escapeshellarg($copy)." -rf";
-			#echo $command.PHP_EOL;
-			#self::exec($command);
 		}
 	}
 	
