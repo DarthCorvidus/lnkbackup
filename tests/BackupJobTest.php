@@ -157,4 +157,15 @@ class BackupJobTest extends TestCase {
 		$command = $job->removeCopy($file);
 		$this->assertEquals(FALSE, file_exists($file));
 	}
+	
+	function testCopyPeriodicMonthly() {
+		$file = __DIR__."/target.empty/2010-01-01";
+		exec("mkdir ". escapeshellarg($file));
+		$job = $this->getBackupJob("2010-01-01");
+		$array = $job->getCopyPeriodic("monthly");
+		$expect[] = "cp ".escapeshellarg("tests/target.empty//2010-01-01")." ".escapeshellarg("tests/target.empty//temp.monthly")." ". escapeshellarg("-al");
+		$expect[] = "mv ".escapeshellarg("tests/target.empty//temp.monthly")." ".escapeshellarg("tests/target.empty//2010-01-01.monthly");
+		$this->assertEquals($expect[0], $array[0]->buildCommand());
+		$this->assertEquals($expect[1], $array[1]->buildCommand());
+	}
 }

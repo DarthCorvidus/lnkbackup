@@ -54,7 +54,8 @@ class BackupJob {
 		}
 	}
 	
-	private function copyPeriodic(string $suffix) {
+	function getCopyPeriodic(string $suffix): array {
+		$array = array();
 		$source = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
 		$temp = $this->config->getTarget()."/temp.".$suffix;
 		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d").".".$suffix;
@@ -67,24 +68,30 @@ class BackupJob {
 		$cp->addParameter($source);
 		$cp->addParameter($temp);
 		$cp->addParameter("-al");
-		$cp->exec();
+		$array[] = $cp;
 		
 		$mv = new Command("mv");
 		$this->silence($mv);
 		$mv->addParameter($temp);
 		$mv->addParameter($final);
-		$mv->exec();
+		$array[] = $mv;
+	return $array;
 	}
 	
 	private function copyWMY(string $final) {
+		$commands = array();
 		if($this->date->getDate("N")==7) {
-			$this->copyPeriodic("weekly");
+			$commands = array_merge($commands, $this->getCopyPeriodic("weekly"));
 		}
 		if($this->date->getDate("d")==="01") {
-			$this->copyPeriodic("monthly");
+			$commands = array_merge($commands, $this->getCopyPeriodic("monthly"));
 		}
 		if($this->date->getDate("m-d")==="01-01") {
-			$this->copyPeriodic("yearly");
+			$commands = array_merge($commands, $this->getCopyPeriodic("yearly"));
+		}
+		
+		foreach($commands as $value) {
+			$value->exec();
 		}
 	}
 	
