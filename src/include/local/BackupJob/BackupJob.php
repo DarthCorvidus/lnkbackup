@@ -17,7 +17,6 @@ class BackupJob {
 	}
 	
 	private function silence(Command $command) {
-		var_dump($this->silent);
 		if(!$this->silent) {
 			$command->showCommand();
 			$command->showOutput();
