@@ -2,6 +2,19 @@
 declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 class BackupJobTest extends TestCase {
+	function getBackupJob($forceDate): BackupJob {
+		$argv = array();
+		$argv[] = "lnkbackup.php";
+		$argv[] = __DIR__."/conf.d/local-empty.conf";
+		$argv[] = "--force-date=".$forceDate;
+		$argv[] = "--silent";
+		$model = new ArgvBackup();
+		$args = new Argv($argv, $model);
+		$config = JobConfig::fromFile(__DIR__."/conf.d/local-empty.conf");
+		$backup = new BackupJob($config, $args);
+	return $backup;
+	}
+
 	/**
 	 * Test backup to empty
 	 * 
@@ -88,4 +101,53 @@ class BackupJobTest extends TestCase {
 		$this->assertEquals(FALSE, file_exists(__DIR__."/target.empty/2010-01-02/file02.txt"));
 	}
 
+	function getCopyPeriodicWeeklyNonexistent() {
+		$job = $this->getBackupJob("2010-01-03");
+		$commands = $job->getCopyPeriodic("weekly");
+		$expected[] = "cp ". escapeshellarg("tests/target.empty/substring")." ".escapeshellargs("tests/target.empty/substring");
+	}
+	
+	/**
+	 * Test get rsync for empty
+	 * 
+	 * If a backup folder is completely empty, lnkbackup will backup to
+	 * temp.create and then move to current/forced date daily entry.
+	 * Note that --delete is used, should temp.create already exist.
+	 */
+	function testGetRsyncForEmpty() {
+		$command[] = "rsync";
+		$command[] = escapeshellarg("tests/source/");
+		$command[] = escapeshellarg("tests/target.empty//temp.create");
+		$command[] = escapeshellarg("-avz");
+		$command[] = escapeshellarg("--exclude-from")."=".escapeshellarg(__DIR__."/conf.d/exclude-local.txt");
+		$command[] = escapeshellarg("--delete");
+		$job = $this->getBackupJob("2010-01-01");
+		$expected[] = implode(" ", $command);
+		$expected[] = "mv ".escapeshellarg("tests/target.empty//temp.create")." ".escapeshellarg("tests/target.empty//2010-01-01");
+		$commands = $job->getEmptyCommands();
+		$this->assertEquals($expected[0], $commands[0]->buildCommand());
+		$this->assertEquals($expected[1], $commands[1]->buildCommand());
+	}
+
+	/**
+	 * Test get rsync for empty same
+	 * 
+	 * If a backup folder contains the same entry as for current/forced date,
+	 * lnkbackup will copy over existing entry using --delete.
+	 * without backup entries.
+	 */
+	function testGetRsyncForEmptySame() {
+		exec("mkdir ".__DIR__."/target.empty/2010-01-01");
+		$command[] = "rsync";
+		$command[] = escapeshellarg("tests/source/");
+		$command[] = escapeshellarg("tests/target.empty//2010-01-01");
+		$command[] = escapeshellarg("-avz");
+		$command[] = escapeshellarg("--exclude-from")."=".escapeshellarg(__DIR__."/conf.d/exclude-local.txt");
+		$command[] = escapeshellarg("--delete");
+		$job = $this->getBackupJob("2010-01-01");
+		$expected[] = implode(" ", $command);
+		$commands = $job->getEmptyCommands();
+		$this->assertEquals($expected[0], $commands[0]->buildCommand());
+	}
+	
 }

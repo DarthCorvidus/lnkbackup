@@ -25,7 +25,7 @@ class BackupJob {
 	
 	private function addExclude(Command $rsyncCommand) {
 		if($this->config->hasExclude()) {
-			$rsyncCommand->addParameter("--exclude-from", $this->config->getExclude());
+			$rsyncCommand->addParameter("--exclude-from", realpath($this->config->getExclude()));
 		}
 	}
 	
@@ -45,10 +45,11 @@ class BackupJob {
 			throw new Exception("parameter \$copy is empty or /, this should never happen!");
 		}
 		if(file_exists($copy)) {
-			$rm = new Command("mv");
+			$rm = new Command("rm");
 			$this->silence($rm);
 			$rm->addParameter($copy);
 			$rm->addParameter("-rf");
+			$rm->exec();
 			#$command = "rm ".escapeshellarg($copy)." -rf";
 			#echo $command.PHP_EOL;
 			#self::exec($command);
@@ -138,6 +139,45 @@ class BackupJob {
 			$this->copyWMY($final);
 		}
 		
+	}
+	
+	function getEmptyCommands(): array {
+		$commands = array();
+		$temp = $this->config->getTarget()."/temp.create";
+		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
+		$source = $this->config->getSource();
+		$exclude = NULL;
+		if(!file_exists($final)) {
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+
+			$rsync->addParameter($source);
+			$rsync->addParameter($temp);
+			$rsync->addParameter("-avz");
+			$this->addExclude($rsync);
+			$rsync->addParameter("--delete");
+			$commands[] = $rsync;
+			
+			#$command = "rsync ".escapeshellarg($source)." ".escapeshellarg($temp)." ".$exclude." -avz --delete";
+			#echo $command.PHP_EOL;
+			#BackupJob::exec($command);
+	
+			$mv = new Command("mv");
+			$this->silence($mv);
+			$mv->addParameter($temp);
+			$mv->addParameter($final);
+			$commands[] = $mv;
+		} else {
+			$rsync = new Command("rsync");
+			$this->silence($rsync);
+			$rsync->addParameter($source);
+			$rsync->addParameter($final);
+			$rsync->addParameter("-avz");
+			$this->addExclude($rsync);
+			$rsync->addParameter("--delete");
+			$commands[] = $rsync;
+		}
+	return $commands;
 	}
 	
 	function execute() {
