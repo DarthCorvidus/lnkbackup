@@ -63,6 +63,7 @@ class CopyJobTest extends TestCase {
 		$array[] = "--monthly";
 		$array[] = "--yearly";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -76,8 +77,13 @@ class CopyJobTest extends TestCase {
 		
 		$this->expectOutputString($output);
 		$job->run();
+		$mainstat = stat(__DIR__."/../target.empty/2010-01-01/.gitkeep");
 		foreach($expected as $value) {
 			$this->assertFileExists(__DIR__."/../target.empty/".$value);
+			$this->assertFileExists(__DIR__."/../target.empty/".$value."/.gitkeep");
+			$stat = stat(__DIR__."/../target.empty/".$value."/.gitkeep");
+			//Check if .gitkeep all have the same inode.
+			$this->assertEquals($mainstat["ino"], $stat["ino"]);
 		}
 	}
 
@@ -89,6 +95,7 @@ class CopyJobTest extends TestCase {
 		$array[] = __DIR__."/../target.empty/";
 		$array[] = "--daily";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -115,6 +122,7 @@ class CopyJobTest extends TestCase {
 		$array[] = __DIR__."/../target.empty/";
 		$array[] = "--weekly";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -141,6 +149,7 @@ class CopyJobTest extends TestCase {
 		$array[] = __DIR__."/../target.empty/";
 		$array[] = "--monthly";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -162,6 +171,7 @@ class CopyJobTest extends TestCase {
 		$array[] = __DIR__."/../target.empty/";
 		$array[] = "--yearly";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -187,6 +197,7 @@ class CopyJobTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--from=2010-01-02";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
@@ -217,6 +228,7 @@ class CopyJobTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--to=2010-01-02";
 		$array[] = "--run";
+		$array[] = "--silent";
 		$job = new CopyJob($array);
 		$output = "Entries to be copied:".PHP_EOL;
 		foreach($expected as $value) {
