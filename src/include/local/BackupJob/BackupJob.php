@@ -40,7 +40,8 @@ class BackupJob {
 		fclose($handle);
 	}
 	
-	function removeCopy(string $copy) {
+	function getRemoveCopy(string $copy): array {
+		$array = array();
 		if(trim($copy)=="" || trim($copy)=="/") {
 			throw new Exception("parameter \$copy is empty or /, this should never happen!");
 		}
@@ -50,8 +51,9 @@ class BackupJob {
 			$this->silence($rm);
 			$rm->addParameter($copy);
 			$rm->addParameter("-rf");
-			$rm->exec();
+			$array[] = $rm;
 		}
+	return $array;
 	}
 	
 	function getCopyPeriodic(string $suffix): array {
@@ -60,8 +62,8 @@ class BackupJob {
 		$temp = $this->config->getTarget()."/temp.".$suffix;
 		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d").".".$suffix;
 		
-		$this->removeCopy($temp);
-		$this->removeCopy($final);
+		$array = array_merge($array, $this->getRemoveCopy($temp));
+		$array = array_merge($array, $this->getRemoveCopy($final));
 
 		$cp = new Command("cp");
 		$this->silence($cp);
