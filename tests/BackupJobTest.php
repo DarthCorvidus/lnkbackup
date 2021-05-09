@@ -192,4 +192,32 @@ class BackupJobTest extends TestCase {
 		}
 		$this->assertEquals(6, count($array));
 	}
+	
+	function testGetCopyWMYPreexisting() {
+		$expect[] = "rm ".escapeshellarg("tests/target.empty//2017-01-01.weekly")." ".escapeshellarg("-rf");
+		$expect[] = "cp ".escapeshellarg("tests/target.empty//2017-01-01")." ".escapeshellarg("tests/target.empty//temp.weekly")." ". escapeshellarg("-al");
+		$expect[] = "mv ".escapeshellarg("tests/target.empty//temp.weekly")." ".escapeshellarg("tests/target.empty//2017-01-01.weekly");
+
+		$expect[] = "rm ".escapeshellarg("tests/target.empty//2017-01-01.monthly")." ".escapeshellarg("-rf");
+		$expect[] = "cp ".escapeshellarg("tests/target.empty//2017-01-01")." ".escapeshellarg("tests/target.empty//temp.monthly")." ". escapeshellarg("-al");
+		$expect[] = "mv ".escapeshellarg("tests/target.empty//temp.monthly")." ".escapeshellarg("tests/target.empty//2017-01-01.monthly");
+
+		$expect[] = "rm ".escapeshellarg("tests/target.empty//2017-01-01.yearly")." ".escapeshellarg("-rf");
+		$expect[] = "cp ".escapeshellarg("tests/target.empty//2017-01-01")." ".escapeshellarg("tests/target.empty//temp.yearly")." ". escapeshellarg("-al");
+		$expect[] = "mv ".escapeshellarg("tests/target.empty//temp.yearly")." ".escapeshellarg("tests/target.empty//2017-01-01.yearly");
+		
+		$file = __DIR__."/target.empty/2017-01-01";
+		exec("mkdir ". escapeshellarg($file));
+		exec("mkdir ". escapeshellarg($file.".weekly"));
+		exec("mkdir ". escapeshellarg($file.".monthly"));
+		exec("mkdir ". escapeshellarg($file.".yearly"));
+		
+		$job = $this->getBackupJob("2017-01-01");
+		$array = $job->getCopyWMY("2017-01-01");
+		foreach($expect as $key => $value) {
+			$this->assertEquals($value, $array[$key]->buildCommand());
+		}
+		$this->assertEquals(9, count($array));
+	}
+
 }
