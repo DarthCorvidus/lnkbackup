@@ -34,19 +34,44 @@ class RebuildJob {
 			echo basename($source)." to ".$finalBase.PHP_EOL;
 		return;
 		}
+		
+		$commands = array();
+		
 		$temp = $location."/temp.rebuild";
 		$final = $location."/".$finalBase;
 		if(file_exists($temp)) {
-			$rm = "rm ".escapeshellarg($temp)." -rvf";
-			echo $rm.PHP_EOL;
-			BackupJob::exec($rm);
+			$rm = new Command("rm");
+			$rm->addParameter($temp);
+			$rm->addParameter("-rf");
+			$commands[] = $rm;
+			
+			#$rm = "rm ".escapeshellarg($temp)." -rf";
+			#echo $rm.PHP_EOL;
+			#BackupJob::exec($rm);
 		}
-		$cp = "cp ". escapeshellarg($source)." ".escapeshellarg($temp)." -al";
-		echo $cp.PHP_EOL;
-		BackupJob::exec($cp);
-		$mv = "mv ". escapeshellarg($temp)." ".escapeshellarg($final);
-		echo $mv.PHP_EOL;
-		BackupJob::exec($mv);
+		$cp = new Command("cp");
+		$cp->addParameter($source);
+		$cp->addParameter($temp);
+		$cp->addParameter("-al");
+		$commands[] = $cp;
+		
+		$mv = new Command("mv");
+		$mv->addParameter($temp);
+		$mv->addParameter($final);
+		$commands[] = $mv;
+		
+		foreach($commands as $value) {
+			$value->showCommand();
+			$value->showOutput();
+			$value->exec();
+		}
+		
+		#$cp = "cp ". escapeshellarg($source)." ".escapeshellarg($temp)." -al";
+		#echo $cp.PHP_EOL;
+		#BackupJob::exec($cp);
+		#$mv = "mv ". escapeshellarg($temp)." ".escapeshellarg($final);
+		#echo $mv.PHP_EOL;
+		#BackupJob::exec($mv);
 		echo PHP_EOL;
 	}
 	
