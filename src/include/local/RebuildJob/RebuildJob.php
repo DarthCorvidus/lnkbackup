@@ -61,8 +61,10 @@ class RebuildJob {
 		$commands[] = $mv;
 		
 		foreach($commands as $value) {
-			$value->showCommand();
-			$value->showOutput();
+			if(!$this->argv->getBoolean("silent")) {
+				$value->showCommand();
+				$value->showOutput();
+			}
 			$value->exec();
 		}
 		
@@ -72,7 +74,10 @@ class RebuildJob {
 		#$mv = "mv ". escapeshellarg($temp)." ".escapeshellarg($final);
 		#echo $mv.PHP_EOL;
 		#BackupJob::exec($mv);
-		echo PHP_EOL;
+		if(!$this->argv->getBoolean("silent")) {
+			echo PHP_EOL;
+		}
+		
 	}
 	
 	private function rebuild(string $period, BackupEntry $entry): bool {

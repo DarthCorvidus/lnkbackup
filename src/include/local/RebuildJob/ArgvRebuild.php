@@ -16,7 +16,7 @@ class ArgvRebuild implements ArgvModel {
 	}
 
 	public function getBoolean(): array {
-		return array("weekly", "monthly", "yearly", "run");
+		return array("weekly", "monthly", "yearly", "run", "silent");
 	}
 
 	public function getArgNames(): array {
