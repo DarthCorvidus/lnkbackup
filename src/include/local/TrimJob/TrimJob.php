@@ -109,7 +109,7 @@ class TrimJob {
 		BackupJob::exec($rm);
 	}
 	
-	function run() {
+	function determineDelete(): array {
 		$delete = array();
 		$entries = $this->backup->getCollection()->getFiltered($this->filter);
 		for($i = 0;$i< $entries->getCount();$i++) {
@@ -121,6 +121,11 @@ class TrimJob {
 			#$delete = $this->addMonths($entry, $delete);
 			#$delete = $this->addYears($entry, $delete);
 		}
+	return $delete;
+	}
+	
+	function run() {
+		$delete = $this->determineDelete();
 		echo "Delete:".PHP_EOL;
 		foreach($delete as $key => $value) {
 			echo "    ".$value.PHP_EOL;
