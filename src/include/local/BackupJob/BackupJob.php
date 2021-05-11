@@ -12,7 +12,7 @@ class BackupJob {
 	function __construct(JobConfig $config, Argv $arg) {
 		$this->config = $config;
 		$this->silent = $arg->getBoolean("silent");
-		$this->date = Date::fromIsodate($arg->getValue("force-date"));
+		$this->date = JulianDate::fromString($arg->getValue("force-date"));
 		$this->backup = new Backup($this->config->getTarget());
 	}
 	
@@ -58,9 +58,9 @@ class BackupJob {
 	
 	function getCopyPeriodic(string $suffix): array {
 		$array = array();
-		$source = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
+		$source = $this->config->getTarget()."/".$this->date->getFormat("Y-m-d");
 		$temp = $this->config->getTarget()."/temp.".$suffix;
-		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d").".".$suffix;
+		$final = $this->config->getTarget()."/".$this->date->getFormat("Y-m-d").".".$suffix;
 		
 		$array = array_merge($array, $this->getRemoveCopy($temp));
 		$array = array_merge($array, $this->getRemoveCopy($final));
@@ -82,13 +82,13 @@ class BackupJob {
 	
 	function getCopyWMY(string $final): array {
 		$commands = array();
-		if($this->date->getDate("N")==7) {
+		if($this->date->getFormat("N")==7) {
 			$commands = array_merge($commands, $this->getCopyPeriodic("weekly"));
 		}
-		if($this->date->getDate("d")==="01") {
+		if($this->date->getFormat("d")==="01") {
 			$commands = array_merge($commands, $this->getCopyPeriodic("monthly"));
 		}
-		if($this->date->getDate("m-d")==="01-01") {
+		if($this->date->getFormat("m-d")==="01-01") {
 			$commands = array_merge($commands, $this->getCopyPeriodic("yearly"));
 		}
 	return $commands;
@@ -105,7 +105,7 @@ class BackupJob {
 	function getBackupOnEmptyCommands(): array {
 		$commands = array();
 		$temp = $this->config->getTarget()."/temp.create";
-		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
+		$final = $this->config->getTarget()."/".$this->date->getFormat("Y-m-d");
 		$source = $this->config->getSource();
 		if(!file_exists($final)) {
 			$rsync = new Command("rsync");
@@ -149,7 +149,7 @@ class BackupJob {
 			return;
 		}
 
-		if($this->backup->getDailyCount()==1 && $this->backup->getLatest()->getDate()->getNumeric()==$this->date->getNumeric()) {
+		if($this->backup->getDailyCount()==1 && $this->backup->getLatest()->getDate()->toInt()==$this->date->toInt()) {
 			foreach($this->getBackupOnEmptyCommands() as $value) {
 				$value->exec();
 			}
@@ -158,7 +158,7 @@ class BackupJob {
 		
 		$latest = realpath($this->backup->getLatest()->getPath());
 		$temp = $this->config->getTarget()."/temp.create";
-		$final = $this->config->getTarget()."/".$this->date->getDate("Y-m-d");
+		$final = $this->config->getTarget()."/".$this->date->getFormat("Y-m-d");
 		$source = $this->config->getSource();
 		$exclude = NULL;
 		if($this->config->hasExclude()) {

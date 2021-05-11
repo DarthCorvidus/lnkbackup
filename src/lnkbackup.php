@@ -5,12 +5,7 @@
  * @author Claus-Christoph Küthe <lnkbackup@vm01.telton.de>
  * @license GPLv3
  */
-$scriptdir = __DIR__;
-require_once $scriptdir."/include/lib/Loader.php";
-require_once $scriptdir."/../vendor/plibv4/command/src/Command.php";
-$loader = new Loader($scriptdir."/include/lib");
-$loader->addRepository($scriptdir."/include/local");
-$loader->SplRegister();
+require_once __DIR__."/../vendor/autoload.php";
 
 $model = new ArgvBackup();
 if(count($argv)==1) {

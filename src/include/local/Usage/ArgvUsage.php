@@ -10,11 +10,11 @@ class ArgvUsage implements ArgvModel {
 	private $positionalNames = array();
 	function __construct() {
 		$this->args["from"] = new ArgDate("from");
-		$date = new Date();
+		$date = new JulianDate();
 		$to = new ArgDate();
-		$to->setDefault($date);
+		$to->setDefault($date->getIsodate());
 		$this->args["to"] = $to;
-		$this->args["subdir"] = new ArgString();
+		$this->args["subdir"] = new ArgGeneric();
 		$this->positional[] = new ArgFile();
 		$this->positionalNames[] = "backup";
 	}

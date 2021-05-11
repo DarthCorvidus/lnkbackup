@@ -5,11 +5,7 @@
  * @author Claus-Christoph Küthe <lnkbackup@vm01.telton.de>
  * @license GPLv3
  */
-$scriptdir = __DIR__;
-include $scriptdir."/include/lib/Loader.php";
-$loader = new Loader($scriptdir."/include/lib");
-$loader->addRepository($scriptdir."/include/local");
-$loader->SplRegister();
+require_once __DIR__."/../vendor/autoload.php";
 try {
 	$copyjob = new CopyJob($argv);
 	$copyjob->run();

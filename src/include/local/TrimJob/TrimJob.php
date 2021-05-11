@@ -22,19 +22,19 @@ class TrimJob {
 		$this->args = new Argv($argv, $model);
 		$this->backup = new Backup($argv[1]);
 		$this->filter = new EntryFilter();
-		$this->now = Date::fromIsodate($this->args->getValue("to"));
+		$this->now = JulianDate::fromString($this->args->getValue("to"));
 		$this->filter->setTo($this->now);
 		
 		if($this->args->hasValue("from")) {
-			$this->filter->setFrom(Date::fromIsodate($this->args->getValue("from")));
+			$this->filter->setFrom(JulianDate::fromString($this->args->getValue("from")));
 		}
 		if($this->args->hasValue("subdir")) {
 			$this->filter->setSubdir($this->args->getValue("subdir"));
 			$this->subdir = $this->args->getValue("subdir");
 		}
-		$this->paramConst["weeks"] = array(BackupEntry::WEEKLY, Date::WEEK);
-		$this->paramConst["months"] = array(BackupEntry::MONTHLY, Date::MONTH);
-		$this->paramConst["years"] = array(BackupEntry::YEARLY, Date::YEAR);
+		$this->paramConst["weeks"] = array(BackupEntry::WEEKLY, JulianDate::WEEK);
+		$this->paramConst["months"] = array(BackupEntry::MONTHLY, JulianDate::MONTH);
+		$this->paramConst["years"] = array(BackupEntry::YEARLY, JulianDate::YEAR);
 	}
 	
 	private function addDays(BackupEntry $entry, array $delete): array {
@@ -48,7 +48,7 @@ class TrimJob {
 			return $delete;
 		}
 		$entryDate = $entry->getDate();
-		$diff = $this->now->getNumeric()-$entryDate->getNumeric();
+		$diff = $this->now->toInt()-$entryDate->toInt();
 		if($diff>=$this->args->getValue("days")) {
 			$delete[] = $entry->getPath();
 		} else {
@@ -67,8 +67,8 @@ class TrimJob {
 		if($entry->getPeriod()!= $this->paramConst[$param][0]) {
 			return $delete;
 		}
-		$first = Date::fromInt($this->now->getNumeric());
-		$first->floor($this->paramConst[$param][1]);
+		$first = JulianDate::fromInt($this->now->toInt());
+		$first = $first->getFirstOf($this->paramConst[$param][1]);
 		/**
 		 * The week begins with Monday, however, the weekly backup is done on
 		 * sunday. It seems to be more intuitive to have a weekly backup done
@@ -77,10 +77,10 @@ class TrimJob {
 		 * last day of their respective periods?
 		 */
 		if($param=="weeks") {
-			$first->subtractUnit(1, Date::DAY);
+			$first = $first->addUnit(-1, JulianDate::DAY);
 		}
-		$first->subtractUnit($this->args->getValue($param), $this->paramConst[$param][1]);
-		if($entry->getDate()->getNumeric()<=$first->getNumeric()) {
+		$first = $first->addUnit(-$this->args->getValue($param), $this->paramConst[$param][1]);
+		if($entry->getDate()->toInt()<=$first->toInt()) {
 			$delete[] = $entry->getPath();
 		} else {
 			$this->keep[] = $entry->getBasename();

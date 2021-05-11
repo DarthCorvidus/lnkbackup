@@ -4,10 +4,10 @@ use PHPUnit\Framework\TestCase;
 class TrimJobTest extends TestCase {
 	function setUp() {
 		mkdir(__DIR__."/trim");
-		$date = Date::fromIsodate("2010-01-01");
+		$date = JulianDate::fromString("2010-01-01");
 		for($i=0;$i<365;$i++) {
-			mkdir(__DIR__."/trim/".$date->getDate("Y-m-d"));
-			$date->addUnit(1, Date::DAY);
+			mkdir(__DIR__."/trim/".$date->getFormat("Y-m-d"));
+			$date = $date->addUnit(1, JulianDate::DAY);
 		}
 		$argv[] = "xxx";
 		$argv[] = __DIR__."/trim";

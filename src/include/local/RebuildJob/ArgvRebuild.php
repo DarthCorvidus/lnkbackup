@@ -9,7 +9,7 @@ class ArgvRebuild implements ArgvModel {
 	private $positional;
 	private $positionalNames;
 	public function __construct() {
-		$this->args["max"] = new ArgString();
+		$this->args["max"] = new ArgGeneric();
 		$this->args["max"]->setValidate(new ValidateInteger());
 		$this->positional[] = new ArgFile();
 		$this->positionalNames[] = "backup";

@@ -9,7 +9,7 @@ class ArgvCopy implements ArgvModel {
 	private $named = array();
 	private $positionalNames = array();
 	public function __construct() {
-		$this->named["max"] = new ArgString();
+		$this->named["max"] = new ArgGeneric();
 		$this->named["max"]->setValidate(new ValidateInteger());
 		$this->named["from"] = new ArgDate();
 		$this->named["to"] = new ArgDate();

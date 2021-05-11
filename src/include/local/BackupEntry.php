@@ -15,7 +15,7 @@ class BackupEntry {
 	function __construct($path) {
 		$this->path = $path;
 		$exp = explode(".", basename($path));
-		$this->date = Date::fromIsodate($exp[0]);
+		$this->date = JulianDate::fromString($exp[0]);
 		if(!isset($exp[1])) {
 			$this->type = self::DAILY;
 			return;
@@ -35,7 +35,7 @@ class BackupEntry {
 		return $this->type;
 	}
 	
-	function getDate():Date {
+	function getDate(): JulianDate {
 		return $this->date;
 	}
 	

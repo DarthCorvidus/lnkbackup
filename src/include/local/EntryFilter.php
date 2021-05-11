@@ -53,9 +53,9 @@ class EntryFilter {
 	 * 
 	 * BackupEntry has to have the same or a higher date to match.
 	 * 
-	 * @param Date $date
+	 * @param JulianDate $date
 	 */
-	function setFrom(Date $date) {
+	function setFrom(JulianDate $date) {
 		$this->from = $date;
 	}
 
@@ -63,9 +63,9 @@ class EntryFilter {
 	 * Set To
 	 * 
 	 * BackupEntry has to have the same or a lower date to match
-	 * @param Date $date
+	 * @param JulianDate $date
 	 */
-	function setTo(Date $date) {
+	function setTo(JulianDate $date) {
 		$this->to = $date;
 	}
 	
@@ -84,11 +84,11 @@ class EntryFilter {
 		if($this->period!=NULL && $this->period!=$entry->getPeriod()) {
 			return false;
 		}
-		if($this->from!=NULL && $entry->getDate()->getNumeric()<$this->from->getNumeric()) {
+		if($this->from!=NULL && $entry->getDate()->toInt()<$this->from->toInt()) {
 			return false;
 		}
 		
-		if($this->to!=NULL && $entry->getDate()->getNumeric()>$this->to->getNumeric()) {
+		if($this->to!=NULL && $entry->getDate()->toInt()>$this->to->toInt()) {
 			return false;
 		}
 		

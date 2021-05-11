@@ -24,10 +24,10 @@ class CopyJob {
 		
 		$this->filter = new EntryFilter();
 		if($this->argv->hasValue("from")) {
-			$this->filter->setFrom(Date::fromIsodate($this->argv->getValue("from")));
+			$this->filter->setFrom(JulianDate::fromString($this->argv->getValue("from")));
 		}
 		if($this->argv->hasValue("to")) {
-			$this->filter->setTo(Date::fromIsodate($this->argv->getValue("to")));
+			$this->filter->setTo(JulianDate::fromString($this->argv->getValue("to")));
 		}
 		if($this->argv->getBoolean("daily")) {
 			$this->filter->addPeriod(BackupEntry::DAILY);

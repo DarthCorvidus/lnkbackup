@@ -119,15 +119,15 @@ class RebuildJob {
 				continue;
 			}
 			$basename = $entry->getBasename();
-			if($entry->getDate()->getDate("N")==7 && $this->rebuild(BackupEntry::WEEKLY, $entry)) {
+			if($entry->getDate()->getFormat("N")==7 && $this->rebuild(BackupEntry::WEEKLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".weekly");
 				$this->i++;
 			}
-			if($entry->getDate()->getDate("d")=="01" && $this->rebuild(BackupEntry::MONTHLY, $entry)) {
+			if($entry->getDate()->getFormat("d")=="01" && $this->rebuild(BackupEntry::MONTHLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".monthly");
 				$this->i++;
 			}
-			if($entry->getDate()->getDate("m-d")=="01-01" && $this->rebuild(BackupEntry::YEARLY, $entry)) {
+			if($entry->getDate()->getFormat("m-d")=="01-01" && $this->rebuild(BackupEntry::YEARLY, $entry)) {
 				$this->createCopy($entry->getPath(), $location, $basename.".yearly");
 				$this->i++;
 			}

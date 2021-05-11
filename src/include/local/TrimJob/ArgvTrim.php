@@ -9,19 +9,19 @@ class ArgvTrim implements ArgvModel {
 	private $positional = array();
 	private $positionalNames = array();
 	function __construct() {
-		$this->args["max"] = new ArgString();
+		$this->args["max"] = new ArgGeneric();
 		$this->args["max"]->setValidate(new ValidateInteger());
 		$this->args["from"] = new ArgDate();
 		$this->args["to"] = new ArgDate();
-		$date = new Date();
-		$this->args["to"]->setDefault($date->getDate("Y-m-d"));
-		$amount = new ArgString();
+		$date = new JulianDate();
+		$this->args["to"]->setDefault($date->getFormat("Y-m-d"));
+		$amount = new ArgGeneric();
 		$amount->setValidate(new ValidateInteger());
 		$this->args["days"] = $amount;
 		$this->args["weeks"] = $amount;
 		$this->args["months"] = $amount;
 		$this->args["years"] = $amount;
-		$this->args["subdir"] = new ArgString();
+		$this->args["subdir"] = new ArgGeneric();
 		$this->positional[] = new ArgFile();
 		$this->positionalNames[] = "backup";
 	}

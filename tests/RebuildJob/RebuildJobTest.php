@@ -4,10 +4,10 @@ use PHPUnit\Framework\TestCase;
 class RebuildJobTest extends TestCase {
 	protected function setUp() {
 		mkdir(__DIR__."/rebuild");
-		$date = Date::fromIsodate("2017-01-01");
+		$date = JulianDate::fromString("2017-01-01");
 		for($i=0;$i<10;$i++) {
 			mkdir(__DIR__."/rebuild/".$date->getIsodate());
-			$date->addUnit(1, Date::DAY);
+			$date = $date->addUnit(1, JulianDate::DAY);
 		}
 	}
 	

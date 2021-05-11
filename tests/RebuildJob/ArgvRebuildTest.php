@@ -45,7 +45,7 @@ class ArgvRebuildTest extends TestCase {
 		$array[] = "--max=bogus";
 		
 		$this->expectException(ArgvException::class);
-		$this->expectExceptionMessage("--max: bogus is not an integer value");
+		$this->expectExceptionMessage("--max: not a valid integer");
 		$argv = new Argv($array, $model);
 	}
 

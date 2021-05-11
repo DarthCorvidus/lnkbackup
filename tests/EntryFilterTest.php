@@ -86,7 +86,7 @@ class EntryFilterTest extends TestCase {
 		$array[] = new BackupEntry("tests/target/2010-01-03");
 		$array[] = new BackupEntry("tests/target/2010-01-03.weekly");
 		$filter = new EntryFilter();
-		$filter->setTo(Date::fromIsodate("2010-01-02"));
+		$filter->setTo(JulianDate::fromString("2010-01-02"));
 		$matched = array();
 		$expected = array_slice($array, 0, 4);
 		foreach($array as $value) {
@@ -106,7 +106,7 @@ class EntryFilterTest extends TestCase {
 		$array[] = new BackupEntry("tests/target/2010-01-03");
 		$array[] = new BackupEntry("tests/target/2010-01-03.weekly");
 		$filter = new EntryFilter();
-		$filter->setFrom(Date::fromIsodate("2010-01-02"));
+		$filter->setFrom(JulianDate::fromString("2010-01-02"));
 		$matched = array();
 		$expected = array_slice($array, 3);
 		foreach($array as $value) {
@@ -126,8 +126,8 @@ class EntryFilterTest extends TestCase {
 		$array[] = new BackupEntry("tests/target/2010-01-03");
 		$array[] = new BackupEntry("tests/target/2010-01-03.weekly");
 		$filter = new EntryFilter();
-		$filter->setFrom(Date::fromIsodate("2010-01-02"));
-		$filter->setFrom(Date::fromIsodate("2010-01-03"));
+		$filter->setFrom(JulianDate::fromString("2010-01-02"));
+		$filter->setFrom(JulianDate::fromString("2010-01-03"));
 		$matched = array();
 		$expected = array_slice($array, 4);
 		foreach($array as $value) {

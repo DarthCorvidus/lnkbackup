@@ -1,3 +1,3 @@
 #!/bin/bash
 clear
-phpunit --bootstrap autoload.php tests
+phpunit --bootstrap vendor/autoload.php tests
