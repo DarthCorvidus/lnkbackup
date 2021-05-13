@@ -9,9 +9,12 @@ class ArgvRebuild implements ArgvModel {
 	private $positional;
 	private $positionalNames;
 	public function __construct() {
-		$this->args["max"] = new ArgGeneric();
+		$this->args["max"] = new UserValue(FALSE);
 		$this->args["max"]->setValidate(new ValidateInteger());
-		$this->positional[] = new ArgFile();
+		
+		$this->positional[0] = new UserValue();
+		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
+		
 		$this->positionalNames[] = "backup";
 	}
 
@@ -23,11 +26,11 @@ class ArgvRebuild implements ArgvModel {
 		return array_keys($this->args);
 	}
 
-	public function getNamedArg(string $name): \ArgModel {
+	public function getNamedArg(string $name): UserValue {
 		return $this->args[$name];
 	}
 
-	public function getPositionalArg(int $i): \ArgModel {
+	public function getPositionalArg(int $i): UserValue {
 		return $this->positional[$i];
 	}
 

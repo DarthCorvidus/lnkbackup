@@ -9,9 +9,12 @@ class ArgvBackup implements ArgvModel {
 	private $positional;
 	private $positionalNames;
 	function __construct() {
-		$this->args["force-date"] = new ArgDate();
-		$this->args["force-date"]->setDefault(date("Y-m-d"));
-		$this->positional[] = new ArgFile();
+		$this->args["force-date"] = new UserValue();
+		$this->args["force-date"]->setValidate(new ValidateDate(ValidateDate::ISO));
+		$this->args["force-date"]->setValue(date("Y-m-d"));
+		$this->positional[0] = new UserValue();
+		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
+		
 		$this->positionalNames[] = "config";
 	}
 	public function getBoolean(): array {
@@ -22,11 +25,11 @@ class ArgvBackup implements ArgvModel {
 		return array_keys($this->args);
 	}
 
-	public function getNamedArg(string $name): \ArgModel {
+	public function getNamedArg(string $name): UserValue {
 		return $this->args[$name];
 	}
 
-	public function getPositionalArg(int $i): \ArgModel {
+	public function getPositionalArg(int $i): UserValue {
 		return $this->positional[$i];
 	}
 

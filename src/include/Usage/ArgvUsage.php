@@ -9,13 +9,17 @@ class ArgvUsage implements ArgvModel {
 	private $positional = array();
 	private $positionalNames = array();
 	function __construct() {
-		$this->args["from"] = new ArgDate("from");
+		$this->args["from"] = new UserValue(FALSE);
+		
 		$date = new JulianDate();
-		$to = new ArgDate();
-		$to->setDefault($date->getIsodate());
+		$to = new UserValue();
+		$to->setValue($date->getIsodate());
+		
 		$this->args["to"] = $to;
-		$this->args["subdir"] = new ArgGeneric();
-		$this->positional[] = new ArgFile();
+		$this->args["subdir"] = new UserValue(FALSE);
+		$this->positional[0] = new UserValue();
+		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::DIR));
+		
 		$this->positionalNames[] = "backup";
 	}
 	public function getBoolean(): array {
@@ -26,11 +30,11 @@ class ArgvUsage implements ArgvModel {
 		return array_keys($this->args);
 	}
 
-	public function getNamedArg(string $name): \ArgModel {
+	public function getNamedArg(string $name): UserValue {
 		return $this->args[$name];
 	}
 
-	public function getPositionalArg(int $i): \ArgModel {
+	public function getPositionalArg(int $i): UserValue {
 		return $this->positional[$i];
 	}
 

@@ -28,7 +28,12 @@
 		{
 			"type": "vcs",
 			"url": "https://github.com/DarthCorvidus/plibv4-command"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-uservalue"
 		}
+
 
 
 	],
@@ -39,7 +44,8 @@
 			"plibv4/longeststring": "dev-main",
 			"plibv4/argv": "dev-main",
 			"plibv4/juliandate": "dev-main",
-			"plibv4/command": "dev-main"
+			"plibv4/command": "dev-main",
+			"plibv4/uservalue": "dev-main"
 	},
 	"autoload": {
         "classmap": ["src/"]

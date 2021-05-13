@@ -9,14 +9,20 @@ class ArgvCopy implements ArgvModel {
 	private $named = array();
 	private $positionalNames = array();
 	public function __construct() {
-		$this->named["max"] = new ArgGeneric();
+		$this->named["max"] = new UserValue(FALSE);
 		$this->named["max"]->setValidate(new ValidateInteger());
-		$this->named["from"] = new ArgDate();
-		$this->named["to"] = new ArgDate();
-		$this->positional[0] = new ArgFile();
-		$this->positional[0]->setType(ArgFile::TYPE_DIRECTORY);
-		$this->positional[1] = new ArgFile();
-		$this->positional[1]->setType(ArgFile::TYPE_DIRECTORY);
+		
+		$this->named["from"] = new UserValue(FALSE);
+		$this->named["from"]->setValidate(new ValidateDate(ValidateDate::ISO));
+		
+		$this->named["to"] = new UserValue(FALSE);
+		$this->named["to"]->setValidate(new ValidateDate(ValidateDate::ISO));
+		
+		$this->positional[0] = new UserValue();
+		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
+		
+		$this->positional[1] = new UserValue();
+		$this->positional[1]->setValidate(new ValidatePath(ValidatePath::BOTH));
 		$this->positionalNames = array("source", "target");
 	}
 
@@ -24,7 +30,7 @@ class ArgvCopy implements ArgvModel {
 		return array_keys($this->named);
 	}
 
-	public function getNamedArg(string $name): \ArgModel {
+	public function getNamedArg(string $name): UserValue {
 		return $this->named[$name];
 	}
 
@@ -32,7 +38,7 @@ class ArgvCopy implements ArgvModel {
 		return count($this->positional);
 	}
 	
-	public function getPositionalArg(int $i): ArgModel {
+	public function getPositionalArg(int $i): UserValue {
 		return $this->positional[$i];
 	}
 	

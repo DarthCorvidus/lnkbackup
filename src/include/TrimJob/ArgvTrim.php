@@ -9,20 +9,29 @@ class ArgvTrim implements ArgvModel {
 	private $positional = array();
 	private $positionalNames = array();
 	function __construct() {
-		$this->args["max"] = new ArgGeneric();
+		$this->args["max"] = new UserValue(FALSE);
 		$this->args["max"]->setValidate(new ValidateInteger());
-		$this->args["from"] = new ArgDate();
-		$this->args["to"] = new ArgDate();
+		
+		$this->args["from"] = new UserValue(FALSE);
+		$this->args["from"]->setValidate(new ValidateDate(ValidateDate::ISO));
+		
+		$this->args["to"] = new UserValue(FALSE);
+		$this->args["to"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		$date = new JulianDate();
-		$this->args["to"]->setDefault($date->getFormat("Y-m-d"));
-		$amount = new ArgGeneric();
+		$this->args["to"]->setValue($date->getFormat("Y-m-d"));
+		
+		$amount = new UserValue(FALSE);
 		$amount->setValidate(new ValidateInteger());
-		$this->args["days"] = $amount;
-		$this->args["weeks"] = $amount;
-		$this->args["months"] = $amount;
-		$this->args["years"] = $amount;
-		$this->args["subdir"] = new ArgGeneric();
-		$this->positional[] = new ArgFile();
+		
+		$this->args["days"] = clone $amount;
+		$this->args["weeks"] = clone $amount;
+		$this->args["months"] = clone $amount;
+		$this->args["years"] = clone $amount;
+		$this->args["subdir"] = new UserValue(FALSE);
+		
+		$this->positional[0] = new UserValue();
+		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::DIR));
+		
 		$this->positionalNames[] = "backup";
 	}
 
@@ -34,11 +43,11 @@ class ArgvTrim implements ArgvModel {
 		return array_keys($this->args);
 	}
 
-	public function getNamedArg(string $name): \ArgModel {
+	public function getNamedArg(string $name): UserValue {
 		return $this->args[$name];
 	}
 
-	public function getPositionalArg(int $i): \ArgModel {
+	public function getPositionalArg(int $i): UserValue {
 		return $this->positional[$i];
 	}
 
