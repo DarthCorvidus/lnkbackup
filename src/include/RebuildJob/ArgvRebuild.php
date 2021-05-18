@@ -9,10 +9,10 @@ class ArgvRebuild implements ArgvModel {
 	private $positional;
 	private $positionalNames;
 	public function __construct() {
-		$this->args["max"] = new UserValue(FALSE);
+		$this->args["max"] = UserValue::asOptional();
 		$this->args["max"]->setValidate(new ValidateInteger());
 		
-		$this->positional[0] = new UserValue();
+		$this->positional[0] = UserValue::asMandatory();
 		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
 		
 		$this->positionalNames[] = "backup";

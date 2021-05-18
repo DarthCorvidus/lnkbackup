@@ -9,15 +9,15 @@ class ArgvUsage implements ArgvModel {
 	private $positional = array();
 	private $positionalNames = array();
 	function __construct() {
-		$this->args["from"] = new UserValue(FALSE);
+		$this->args["from"] = UserValue::asOptional();
 		
 		$date = new JulianDate();
-		$to = new UserValue();
+		$to = UserValue::asOptional();
 		$to->setValue($date->getIsodate());
 		
 		$this->args["to"] = $to;
-		$this->args["subdir"] = new UserValue(FALSE);
-		$this->positional[0] = new UserValue();
+		$this->args["subdir"] = UserValue::asOptional();
+		$this->positional[0] = UserValue::asMandatory();
 		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::DIR));
 		
 		$this->positionalNames[] = "backup";

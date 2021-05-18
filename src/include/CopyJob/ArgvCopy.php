@@ -9,19 +9,19 @@ class ArgvCopy implements ArgvModel {
 	private $named = array();
 	private $positionalNames = array();
 	public function __construct() {
-		$this->named["max"] = new UserValue(FALSE);
+		$this->named["max"] = UserValue::asOptional();
 		$this->named["max"]->setValidate(new ValidateInteger());
 		
-		$this->named["from"] = new UserValue(FALSE);
+		$this->named["from"] = UserValue::asOptional();
 		$this->named["from"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		
-		$this->named["to"] = new UserValue(FALSE);
+		$this->named["to"] = UserValue::asOptional();
 		$this->named["to"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		
-		$this->positional[0] = new UserValue();
+		$this->positional[0] = UserValue::asMandatory();
 		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
 		
-		$this->positional[1] = new UserValue();
+		$this->positional[1] = UserValue::asMandatory();
 		$this->positional[1]->setValidate(new ValidatePath(ValidatePath::BOTH));
 		$this->positionalNames = array("source", "target");
 	}

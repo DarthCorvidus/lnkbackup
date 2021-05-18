@@ -9,27 +9,27 @@ class ArgvTrim implements ArgvModel {
 	private $positional = array();
 	private $positionalNames = array();
 	function __construct() {
-		$this->args["max"] = new UserValue(FALSE);
+		$this->args["max"] = UserValue::asOptional();
 		$this->args["max"]->setValidate(new ValidateInteger());
 		
-		$this->args["from"] = new UserValue(FALSE);
+		$this->args["from"] = UserValue::asOptional();
 		$this->args["from"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		
-		$this->args["to"] = new UserValue(FALSE);
+		$this->args["to"] = UserValue::asOptional();
 		$this->args["to"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		$date = new JulianDate();
 		$this->args["to"]->setValue($date->getFormat("Y-m-d"));
 		
-		$amount = new UserValue(FALSE);
+		$amount = UserValue::asOptional();
 		$amount->setValidate(new ValidateInteger());
 		
 		$this->args["days"] = clone $amount;
 		$this->args["weeks"] = clone $amount;
 		$this->args["months"] = clone $amount;
 		$this->args["years"] = clone $amount;
-		$this->args["subdir"] = new UserValue(FALSE);
+		$this->args["subdir"] = UserValue::asOptional();
 		
-		$this->positional[0] = new UserValue();
+		$this->positional[0] = UserValue::asMandatory();
 		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::DIR));
 		
 		$this->positionalNames[] = "backup";

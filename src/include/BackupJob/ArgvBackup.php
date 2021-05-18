@@ -9,10 +9,10 @@ class ArgvBackup implements ArgvModel {
 	private $positional;
 	private $positionalNames;
 	function __construct() {
-		$this->args["force-date"] = new UserValue();
+		$this->args["force-date"] = UserValue::asMandatory();
 		$this->args["force-date"]->setValidate(new ValidateDate(ValidateDate::ISO));
 		$this->args["force-date"]->setValue(date("Y-m-d"));
-		$this->positional[0] = new UserValue();
+		$this->positional[0] = UserValue::asMandatory();
 		$this->positional[0]->setValidate(new ValidatePath(ValidatePath::BOTH));
 		
 		$this->positionalNames[] = "config";
