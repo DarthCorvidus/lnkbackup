@@ -32,10 +32,11 @@
 		{
 			"type": "vcs",
 			"url": "https://github.com/DarthCorvidus/plibv4-uservalue"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/DarthCorvidus/plibv4-import"
 		}
-
-
-
 	],
 	"name": "lnkbackup/lnkbackup",
 	"require": {
@@ -45,7 +46,8 @@
 			"plibv4/argv": "dev-main",
 			"plibv4/juliandate": "dev-main",
 			"plibv4/command": "dev-main",
-			"plibv4/uservalue": "dev-main"
+			"plibv4/uservalue": "dev-main",
+			"plibv4/import": "dev-main"
 	},
 	"autoload": {
         "classmap": ["src/"]

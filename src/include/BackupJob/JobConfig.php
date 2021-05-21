@@ -22,16 +22,29 @@ class JobConfig {
 	}
 	
 	static function fromArray(array $array): JobConfig {
+		$importGeneric = new ImportGeneric();
+		
+		$source = UserValue::asMandatory();
+		$source->setValidate(new ValidateSource());
+		
+		$target = UserValue::asMandatory();
+		$target->setValidate(new ValidatePath(ValidatePath::DIR));
+		
+		$exclude = UserValue::asOptional();
+		$exclude->setValidate(new ValidatePath(ValidatePath::FILE));
+				
+		$importGeneric->addScalar("source",  $source);
+		$importGeneric->addScalar("target", $target);
+		$importGeneric->addScalar("exclude", $exclude);
+		$import = new Import($array, $importGeneric);
+		$imported = $import->getArray();
+				
 		$config = new JobConfig();
-		$config->source = $array["source"];
-		$config->target = $array["target"];
-		if(!isset($array["exclude"])) {
-			return $config;
+		$config->source = $imported["source"];
+		$config->target = $imported["target"];
+		if(isset($imported["exclude"])) {
+			$config->exclude = $array["exclude"];
 		}
-		if(!file_exists($array["exclude"])) {
-			throw new Exception("exclude file ".$array["exclude"]." does not exist");
-		}
-		$config->exclude = $array["exclude"];
 	return $config;
 	}
 	

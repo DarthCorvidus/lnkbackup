@@ -9,7 +9,7 @@ class JobConfigsTest extends TestCase {
 	}
 	
 	function testConstructFolderProduction() {
-		$this->expectOutputString("Error in ".__DIR__."/conf.d/damaged.conf: exclude file tests/conf.d/madeup.txt does not exist\n");
+		$this->expectOutputString("Error in ".__DIR__."/conf.d/damaged.conf: [\"exclude\"]: path does not exist.\n");
 		$jobs = new JobConfigs(__DIR__."/conf.d");
 		$this->assertInstanceOf(JobConfigs::class, $jobs);
 		$this->assertEquals(2, $jobs->getCount());
