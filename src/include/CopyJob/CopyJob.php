@@ -111,7 +111,7 @@ class CopyJob {
 		#$mv = "mv ".implode(" ", $paramMV);
 		#echo $mv.PHP_EOL;
 		#BackupJob::exec($mv);
-		#$this->progress++;
+		$this->progress++;
 	}
 			
 	function run() {
