@@ -7,7 +7,7 @@
  */
 require_once __DIR__."/../vendor/autoload.php";
 try {
-	$copyjob = new CopyJob($argv);
+	$copyjob = CopyJob::fromArgv($argv);
 	$copyjob->run();
 } catch (ArgvException $e) {
 	echo $e->getMessage().PHP_EOL;

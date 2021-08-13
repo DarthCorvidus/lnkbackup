@@ -7,40 +7,95 @@
 class CopyJob {
 	private $source;
 	private $target;
-	private $argv;
+	#private $argv;
 	private $filter;
 	private $total = 0;
 	private $progress = 1;
-	function __construct(array $array) {
+	private $max = NULL;
+	private $run = TRUE;
+	private $showProgress = FALSE;
+	private $silent = FALSE;
+	function __construct(string $source, string $target) {
+		$this->source = new Backup($source);
+		$this->target = new Backup($target);
+		
+		$this->filter = new EntryFilter();
+		#if($this->argv->hasValue("from")) {
+		#	$this->filter->setFrom(JulianDate::fromString($this->argv->getValue("from")));
+		#}
+		#if($this->argv->hasValue("to")) {
+		#	$this->filter->setTo(JulianDate::fromString($this->argv->getValue("to")));
+		#}
+		#if($this->argv->getBoolean("daily")) {
+		#	$this->filter->addPeriod(BackupEntry::DAILY);
+		#}
+		#if($this->argv->getBoolean("weekly")) {
+		#	$this->filter->addPeriod(BackupEntry::WEEKLY);
+		#}
+		#if($this->argv->getBoolean("monthly")) {
+		#	$this->filter->addPeriod(BackupEntry::MONTHLY);
+		#}
+		#if($this->argv->getBoolean("yearly")) {
+		#	$this->filter->addPeriod(BackupEntry::YEARLY);
+		#}
+	}
+	
+	static function fromArgv(array $array): CopyJob {
 		$model = new ArgvCopy();
 		if(count($array)==1) {
 			$reference = new ArgvReference($model);
 			echo $reference->getReference();
 			die();
 		}
-		$this->argv = new Argv($array, $model);
-		$this->source = new Backup($this->argv->getPositional(0));
-		$this->target = new Backup($this->argv->getPositional(1));
+		$argv = new Argv($array, $model);
+		$source = $argv->getPositional(0);
+		$target = $argv->getPositional(1);
 		
-		$this->filter = new EntryFilter();
-		if($this->argv->hasValue("from")) {
-			$this->filter->setFrom(JulianDate::fromString($this->argv->getValue("from")));
+		$copyjob = new CopyJob($source, $target);
+		
+		if($argv->hasValue("from")) {
+			$copyjob->filter->setFrom(JulianDate::fromString($argv->getValue("from")));
 		}
-		if($this->argv->hasValue("to")) {
-			$this->filter->setTo(JulianDate::fromString($this->argv->getValue("to")));
+		if($argv->hasValue("to")) {
+			$copyjob->filter->setTo(JulianDate::fromString($argv->getValue("to")));
 		}
-		if($this->argv->getBoolean("daily")) {
-			$this->filter->addPeriod(BackupEntry::DAILY);
+		if($argv->getBoolean("daily")) {
+			$copyjob->filter->addPeriod(BackupEntry::DAILY);
 		}
-		if($this->argv->getBoolean("weekly")) {
-			$this->filter->addPeriod(BackupEntry::WEEKLY);
+		if($argv->getBoolean("weekly")) {
+			$copyjob->filter->addPeriod(BackupEntry::WEEKLY);
 		}
-		if($this->argv->getBoolean("monthly")) {
-			$this->filter->addPeriod(BackupEntry::MONTHLY);
+		if($argv->getBoolean("monthly")) {
+			$copyjob->filter->addPeriod(BackupEntry::MONTHLY);
 		}
-		if($this->argv->getBoolean("yearly")) {
-			$this->filter->addPeriod(BackupEntry::YEARLY);
+		if($argv->getBoolean("yearly")) {
+			$copyjob->filter->addPeriod(BackupEntry::YEARLY);
 		}
+		
+		if($argv->hasValue("max")) {
+			$copyjob->setMax($argv->getValue("max"));
+		}
+		
+		$copyjob->setRun($argv->getBoolean("run"));
+		$copyjob->setProgress($argv->getBoolean("progress"));
+		$copyjob->setSilent($argv->getBoolean("silent"));
+	return $copyjob;
+	}
+	
+	function setMax(int $max) {
+		$this->max = $max;
+	}
+	
+	function setProgress(bool $progress) {
+		$this->progress = $progress;
+	}
+	
+	function setRun(bool $run) {
+		$this->run = $run;
+	}
+	
+	function setSilent(bool $silent) {
+		$this->silent = $silent;
 	}
 	
 	function getDiff(): array {
@@ -54,8 +109,8 @@ class CopyJob {
 				$diff[] = $sourceBasename;
 			}
 		}
-		if($this->argv->hasValue("max") && $this->argv->getValue("max")>=0) {
-			$diff = array_slice($diff, 0, $this->argv->getValue("max"));
+		if($this->max!==NULL && $this->max>=0) {
+			$diff = array_slice($diff, 0, $this->max);
 		}
 	return $diff;
 	}
@@ -74,7 +129,7 @@ class CopyJob {
 		$rsync->addParameter($targetTemp);
 		$rsync->addParameter("--delete");
 		$rsync->addParameter("-avz");
-		if(!$this->argv->getBoolean("silent")) {
+		if(!$this->silent) {
 			$rsync->showCommand();
 			$rsync->showOutput();
 		}
@@ -87,7 +142,7 @@ class CopyJob {
 		}
 		#$rsync = "rsync ".implode(" ", $paramRS);
 		#echo $rsync.PHP_EOL;
-		if($this->argv->getBoolean("progress")) {
+		if($this->showProgress) {
 			$rsync->setPrefix($sourceBasename." (".$this->progress."/".$this->total."): ");
 		}
 		#if($this->argv->getBoolean("progress")) {
@@ -100,7 +155,7 @@ class CopyJob {
 		$mv = new Command("mv");
 		$mv->addParameter($targetTemp);
 		$mv->addParameter($targetFinal);
-		if(!$this->argv->getBoolean("silent")) {
+		if(!$this->silent) {
 			$rsync->showCommand();
 			$rsync->showOutput();
 		}
@@ -124,7 +179,7 @@ class CopyJob {
 		foreach($diff as $value) {
 			echo "\t".$value.PHP_EOL;
 		}
-		if(!$this->argv->getBoolean("run")) {
+		if(!$this->run) {
 			echo "Please use --run to copy entries.".PHP_EOL;
 			return;
 		}
@@ -133,8 +188,8 @@ class CopyJob {
 		//folders copied must be used as well.
 		$max = NULL;
 		$this->total = count($diff);
-		if($this->argv->hasValue("max")) {
-			$max = (int)$this->argv->getValue("max");
+		if($this->max!==NULL) {
+			$max = $this->max;
 			$this->total = $max;
 		}
 		while(!empty($diff)) {
