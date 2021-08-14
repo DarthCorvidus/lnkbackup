@@ -49,8 +49,8 @@ class TrimJob {
 		}
 		
 		if($args->hasValue("subdir")) {
-			$trimjob->filter->setSubdir($this->args->getValue("subdir"));
-			$trimjob->setSubdir($this->args->getValue("subdir"));
+			$trimjob->filter->setSubdir($args->getValue("subdir"));
+			$trimjob->setSubdir($args->getValue("subdir"));
 		}
 		
 		if($args->hasValue("max")) {
