@@ -12,36 +12,92 @@ class TrimJob {
 	private $paramConst;
 	private $keep = array();
 	private $subdir;
-	function __construct(array $argv) {
+	private $max;
+	private $days;
+	private $period = array();
+	private $run = true;
+	function __construct(string $path) {
+		$this->backup = new Backup($path);
+		
+		$this->filter = new EntryFilter();
+		$this->now = new JulianDate();
+		
+		$this->paramConst["weeks"] = array(BackupEntry::WEEKLY, JulianDate::WEEK);
+		$this->paramConst["months"] = array(BackupEntry::MONTHLY, JulianDate::MONTH);
+		$this->paramConst["years"] = array(BackupEntry::YEARLY, JulianDate::YEAR);
+	}
+	
+	static function paramConversion() {
+		
+	}
+	
+	static function fromArgv(array $argv): TrimJob {
 		$model = new ArgvTrim();
 		if(count($argv)==1) {
 			$reference = new ArgvReference($model);
 			echo $reference->getReference();
 			die();
 		}
-		$this->args = new Argv($argv, $model);
-		$this->backup = new Backup($argv[1]);
-		$this->filter = new EntryFilter();
-		$this->now = JulianDate::fromString($this->args->getValue("to"));
-		$this->filter->setTo($this->now);
+		$args = new Argv($argv, $model);
+
+		$trimjob = new TrimJob($args->getPositional(0));
+		$trimjob->now = JulianDate::fromString($args->getValue("to"));
+		$trimjob->filter->setTo($trimjob->now);		
 		
-		if($this->args->hasValue("from")) {
-			$this->filter->setFrom(JulianDate::fromString($this->args->getValue("from")));
+		if($args->hasValue("from")) {
+			$trimjob->filter->setFrom(JulianDate::fromString($args->getValue("from")));
 		}
-		if($this->args->hasValue("subdir")) {
-			$this->filter->setSubdir($this->args->getValue("subdir"));
-			$this->subdir = $this->args->getValue("subdir");
+		
+		if($args->hasValue("subdir")) {
+			$trimjob->filter->setSubdir($this->args->getValue("subdir"));
+			$trimjob->setSubdir($this->args->getValue("subdir"));
 		}
-		$this->paramConst["weeks"] = array(BackupEntry::WEEKLY, JulianDate::WEEK);
-		$this->paramConst["months"] = array(BackupEntry::MONTHLY, JulianDate::MONTH);
-		$this->paramConst["years"] = array(BackupEntry::YEARLY, JulianDate::YEAR);
+		
+		if($args->hasValue("max")) {
+			$trimjob->setMax((int)$args->getValue("max"));
+		}
+		
+		if($args->hasValue("days")) {
+			$trimjob->setPeriod("days", (int)$args->getValue("days"));
+		}
+		
+		foreach($trimjob->paramConst as $key => $value) {
+			if($args->hasValue($key)) {
+				$trimjob->setPeriod($key, $args->getValue($key));
+			}
+		}
+		
+		$trimjob->setRun($args->getBoolean("run"));
+		#print_r($trimjob->period);
+		#throw new Exception();
+	return $trimjob;
+	}
+	
+	function setRun(bool $run) {
+		$this->run = $run;
+	}
+	
+	function setSubdir(string $subdir) {
+		$this->subdir = $subdir;
+	}
+	
+	function setMax(int $max) {
+		$this->max = $max;
+	}
+	
+	function setDays(int $days) {
+		$this->days = $days;
+	}
+	
+	function setPeriod(string $period, int $amount) {
+		$this->period[$period] = $amount;
 	}
 	
 	private function addDays(BackupEntry $entry, array $delete): array {
-		if($this->args->hasValue("max") && count($delete)>=$this->args->getValue("max")) {
+		if($this->max!==NULL && count($delete)>=$this->max) {
 			return $delete;
 		}
-		if(!$this->args->hasValue("days")) {
+		if(!isset($this->period["days"])) {
 			return $delete;
 		}
 		if($entry->getPeriod()!= BackupEntry::DAILY) {
@@ -49,7 +105,7 @@ class TrimJob {
 		}
 		$entryDate = $entry->getDate();
 		$diff = $this->now->toInt()-$entryDate->toInt();
-		if($diff>=$this->args->getValue("days")) {
+		if($diff>=$this->period["days"]) {
 			$delete[] = $entry->getPath();
 		} else {
 			$this->keep[] = $entry->getBasename();
@@ -58,10 +114,10 @@ class TrimJob {
 	}
 
 	private function addDelete(BackupEntry $entry, array $delete, string $param): array {
-		if($this->args->hasValue("max") && count($delete)>=$this->args->getValue("max")) {
+		if($this->max!==NULL && count($delete)>=$this->max) {
 			return $delete;
 		}
-		if(!$this->args->hasValue($param)) {
+		if(!isset($this->period[$param])) {
 			return $delete;
 		}
 		if($entry->getPeriod()!= $this->paramConst[$param][0]) {
@@ -79,7 +135,8 @@ class TrimJob {
 		if($param=="weeks") {
 			$first = $first->addUnit(-1, JulianDate::DAY);
 		}
-		$first = $first->addUnit(-$this->args->getValue($param), $this->paramConst[$param][1]);
+
+		$first = $first->addUnit(-$this->period[$param], $this->paramConst[$param][1]);
 		if($entry->getDate()->toInt()<=$first->toInt()) {
 			$delete[] = $entry->getPath();
 		} else {
@@ -134,7 +191,7 @@ class TrimJob {
 		foreach($this->keep as $key => $value) {
 			echo "    ".$value.PHP_EOL;
 		}
-		if($this->args->getBoolean("run")) {
+		if($this->run) {
 			echo "Deleting:".PHP_EOL;
 			foreach($delete as $key=> $value) {
 				$this->delete($value);

@@ -25,10 +25,10 @@ class TrimJobTest extends TestCase {
 		exec("rm ".escapeshellarg(__DIR__."/trim")." -rf");
 	}
 	
-	function testConstruct() {
+	function testFromArgv() {
 		$argv[] = "xxx";
 		$argv[] = __DIR__."/trim";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$this->assertInstanceOf(TrimJob::class, $trim);
 	}
 	
@@ -41,7 +41,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = "--years=0";
 		$argv[] = "--to=2010-12-31";
 		$argv[] = "--run";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			$expect[] = $value;
@@ -59,7 +59,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = "--to=2010-12-31";
 		$argv[] = "--max=10";
 		$argv[] = "--run";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			$expect[] = $value;
@@ -73,7 +73,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--days=0";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			if(!preg_match("/^2010-[0-9]{2}-[0-9]{2}$/", basename($value))) {
@@ -89,7 +89,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--days=14";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			if(!preg_match("/^2010-[0-9]{2}-[0-9]{2}$/", basename($value))) {
@@ -106,7 +106,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--weeks=0";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			if(!preg_match("/^2010-[0-9]{2}-[0-9]{2}\.weekly$/", basename($value))) {
@@ -122,7 +122,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--weeks=4";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		$keep = array("2010-12-05.weekly", "2010-12-12.weekly", "2010-12-19.weekly", "2010-12-26.weekly");
 		foreach(glob(__DIR__."/trim/*") as $value) {
@@ -142,7 +142,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--months=0";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			if(!preg_match("/^2010-[0-9]{2}-[0-9]{2}\.monthly$/", basename($value))) {
@@ -158,7 +158,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--months=6";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		$keep = array("2010-07-01.monthly", "2010-08-01.monthly", "2010-09-01.monthly", "2010-10-01.monthly", "2010-11-01.monthly", "2010-12-01.monthly");
 		foreach(glob(__DIR__."/trim/*") as $value) {
@@ -178,7 +178,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--years=0";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		foreach(glob(__DIR__."/trim/*") as $value) {
 			if(!preg_match("/^2010-[0-9]{2}-[0-9]{2}\.yearly$/", basename($value))) {
@@ -194,7 +194,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = __DIR__."/trim";
 		$argv[] = "--years=1";
 		$argv[] = "--to=2010-12-31";
-		$trim = new TrimJob($argv);
+		$trim = TrimJob::fromArgv($argv);
 		$expect = array();
 		$keep = array("2010-01-01.yearly");
 		foreach(glob(__DIR__."/trim/*") as $value) {
