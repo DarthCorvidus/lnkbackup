@@ -87,7 +87,7 @@ class CopyJob {
 	}
 	
 	function setProgress(bool $progress) {
-		$this->progress = $progress;
+		$this->showProgress = $progress;
 	}
 	
 	function setRun(bool $run) {
