@@ -5,32 +5,63 @@
  * @license GPLv3
  */
 class RebuildJob {
-	private $argv;
 	private $backup;
 	private $rebuild = array();
 	private $i = 0;
-	function __construct(array $argv) {
+	private $max;
+	private $run = true;
+	private $silent = false;
+	function __construct(string $path) {
+		$this->backup = new Backup($path);
+	}
+
+	static function fromArgv(array $array): RebuildJob {
 		$model = new ArgvRebuild();
-		if(count($argv)==1) {
+		if(count($array)<=1) {
 			$reference = new ArgvReference($model);
 			echo $reference->getReference();
 			die();
 		}
-		$this->argv = new Argv($argv, $model);
-		$this->backup = new Backup($this->argv->getPositional(0));
-		if($this->argv->getBoolean("weekly")) {
-			$this->rebuild[] = BackupEntry::WEEKLY;
+		$argv = new Argv($array, $model);
+		$rebuild = new RebuildJob($argv->getPositional(0));
+
+		if($argv->getBoolean("weekly")) {
+			$rebuild->addRebuild(BackupEntry::WEEKLY);
 		}
-		if($this->argv->getBoolean("monthly")) {
-			$this->rebuild[] = BackupEntry::MONTHLY;
+		if($argv->getBoolean("monthly")) {
+			$rebuild->addRebuild(BackupEntry::MONTHLY);
 		}
-		if($this->argv->getBoolean("yearly")) {
-			$this->rebuild[] = BackupEntry::YEARLY;
+		if($argv->getBoolean("yearly")) {
+			$rebuild->addRebuild(BackupEntry::YEARLY);
 		}
+		
+		if($argv->hasValue("max")) {
+			$rebuild->setMax((int)$argv->getValue("max"));
+		}
+		
+		$rebuild->setRun($argv->getBoolean("run"));
+		$rebuild->setSilent($argv->getBoolean("silent"));
+	return $rebuild;
+	}
+	
+	public function addRebuild(string $rebuild) {
+		$this->rebuild[] = $rebuild;
+	}
+	
+	public function setMax(int $max) {
+		$this->max = $max;
+	}
+	
+	public function setRun(bool $run) {
+		$this->run = $run;
+	}
+	
+	public function setSilent(bool $silent) {
+		$this->silent = $silent;
 	}
 	
 	private function createCopy(string $source, string $location, string $finalBase) {
-		if(!$this->argv->getBoolean("run")) {
+		if(!$this->run) {
 			echo basename($source)." to ".$finalBase.PHP_EOL;
 		return;
 		}
@@ -61,7 +92,7 @@ class RebuildJob {
 		$commands[] = $mv;
 		
 		foreach($commands as $value) {
-			if(!$this->argv->getBoolean("silent")) {
+			if(!$this->silent) {
 				$value->showCommand();
 				$value->showOutput();
 			}
@@ -74,14 +105,14 @@ class RebuildJob {
 		#$mv = "mv ". escapeshellarg($temp)." ".escapeshellarg($final);
 		#echo $mv.PHP_EOL;
 		#BackupJob::exec($mv);
-		if(!$this->argv->getBoolean("silent")) {
+		if(!$this->silent) {
 			echo PHP_EOL;
 		}
 		
 	}
 	
 	private function rebuild(string $period, BackupEntry $entry): bool {
-		if($this->argv->hasValue("max") && $this->i==$this->argv->getValue("max")) {
+		if($this->max!==NULL && $this->i==$this->max) {
 			return false;
 		}
 		$target = $this->backup->getLocation()."/".$entry->getBasename().".".$period;
@@ -111,7 +142,7 @@ class RebuildJob {
 			 * Therefore, progress is tracked globally and checked within
 			 * rebuild() as well.
 			 */
-			if($this->argv->hasValue("max") && $this->i==$this->argv->getValue("max")) {
+			if($this->max!==NULL && $this->i==$this->max) {
 				break;
 			}
 			$entry = $entries->getEntry($i);
@@ -134,7 +165,7 @@ class RebuildJob {
 
 			#echo $entry->getPath().PHP_EOL;
 		}
-		if(!$this->argv->getBoolean("run")) {
+		if(!$this->run) {
 			echo "Please use --run to rebuild entries.".PHP_EOL;
 		}
 	}

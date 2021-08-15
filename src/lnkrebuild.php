@@ -7,7 +7,7 @@
  */
 require_once __DIR__."/../vendor/autoload.php";
 try {
-	$rbjob = new RebuildJob($argv);
+	$rbjob = RebuildJob::fromArgv($argv);
 	$rbjob->run();
 } catch (ArgvException $e) {
 	echo $e->getMessage().PHP_EOL;

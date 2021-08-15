@@ -17,7 +17,7 @@ class TrimJobTest extends TestCase {
 		$argv[] = "--yearly";
 		$argv[] = "--silent";
 		
-		$rebuild = new RebuildJob($argv);
+		$rebuild = RebuildJob::fromArgv($argv);
 		$rebuild->run();
 	}
 	

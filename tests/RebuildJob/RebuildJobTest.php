@@ -31,7 +31,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--monthly";
 		$array[] = "--yearly";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$output = "";
 		
 		foreach($expect as $value) {
@@ -60,7 +60,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$output = "";
 		
 		foreach($expect as $value) {
@@ -94,7 +94,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$job->run();
 		$output = "";
 		$output .= "Skipping over 'temp.rebuild': invalid isodate, must be YYYY-MM-DD\n";
@@ -129,7 +129,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--max=2";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$job->run();
 		$output = "";
 		foreach($expect as $value) {
@@ -160,7 +160,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--weekly";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$output = "";
 		
 		foreach($expect as $value) {
@@ -189,7 +189,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--monthly";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$output = "";
 		
 		foreach($expect as $value) {
@@ -218,7 +218,7 @@ class RebuildJobTest extends TestCase {
 		$array[] = "--yearly";
 		$array[] = "--run";
 		
-		$job = new RebuildJob($array);
+		$job = RebuildJob::fromArgv($array);
 		$output = "";
 		
 		foreach($expect as $value) {
