@@ -1,0 +1,283 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "7e66915e46cf663237bbbf642195e35a",
+    "packages": [
+        {
+            "name": "plibv4/argv",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-argv.git",
+                "reference": "c2b709815268aaae02774fd2acfd335b24ef11eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-argv/zipball/c2b709815268aaae02774fd2acfd335b24ef11eb",
+                "reference": "c2b709815268aaae02774fd2acfd335b24ef11eb",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/convert": "dev-main",
+                "plibv4/longeststring": "dev-main",
+                "plibv4/uservalue": "dev-main",
+                "plibv4/validate": "dev-main"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-argv/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-argv/issues"
+            },
+            "time": "2021-05-18T18:18:52+00:00"
+        },
+        {
+            "name": "plibv4/assert",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-assert.git",
+                "reference": "47d6e5dfce27d8e49eb171c161f03076e83321f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-assert/zipball/47d6e5dfce27d8e49eb171c161f03076e83321f8",
+                "reference": "47d6e5dfce27d8e49eb171c161f03076e83321f8",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-assert/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-assert/issues"
+            },
+            "time": "2021-04-24T16:39:21+00:00"
+        },
+        {
+            "name": "plibv4/command",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-command.git",
+                "reference": "4c715a23b1d5c29c945e47f2fa3a2f17e44860b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-command/zipball/4c715a23b1d5c29c945e47f2fa3a2f17e44860b9",
+                "reference": "4c715a23b1d5c29c945e47f2fa3a2f17e44860b9",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-command/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-command/issues"
+            },
+            "time": "2021-05-08T14:35:15+00:00"
+        },
+        {
+            "name": "plibv4/convert",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-convert.git",
+                "reference": "159c3de62cd2c84775ea723a0a34b5274c8c0ebb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-convert/zipball/159c3de62cd2c84775ea723a0a34b5274c8c0ebb",
+                "reference": "159c3de62cd2c84775ea723a0a34b5274c8c0ebb",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/assert": "dev-main"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-convert/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-convert/issues"
+            },
+            "time": "2021-04-18T13:09:20+00:00"
+        },
+        {
+            "name": "plibv4/import",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-import.git",
+                "reference": "4d76b9c8d2dddedfdd29cbd5fca3a5619b315806"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-import/zipball/4d76b9c8d2dddedfdd29cbd5fca3a5619b315806",
+                "reference": "4d76b9c8d2dddedfdd29cbd5fca3a5619b315806",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/assert": "dev-main",
+                "plibv4/convert": "dev-main",
+                "plibv4/uservalue": "dev-main",
+                "plibv4/validate": "dev-main"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-import/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-import/issues"
+            },
+            "time": "2021-05-18T18:47:14+00:00"
+        },
+        {
+            "name": "plibv4/juliandate",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-juliandate.git",
+                "reference": "0da796cd78c9447d0a0e13b001426979cb7e268e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-juliandate/zipball/0da796cd78c9447d0a0e13b001426979cb7e268e",
+                "reference": "0da796cd78c9447d0a0e13b001426979cb7e268e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-juliandate/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-juliandate/issues"
+            },
+            "time": "2021-07-31T19:34:36+00:00"
+        },
+        {
+            "name": "plibv4/longeststring",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-longeststring.git",
+                "reference": "0e6142f36f78d14b46085e28c2c22608b701b1bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-longeststring/zipball/0e6142f36f78d14b46085e28c2c22608b701b1bb",
+                "reference": "0e6142f36f78d14b46085e28c2c22608b701b1bb",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-longeststring/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-longeststring/issues"
+            },
+            "time": "2021-04-19T20:20:40+00:00"
+        },
+        {
+            "name": "plibv4/uservalue",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-uservalue.git",
+                "reference": "65e286d71432bb625c9f006acd9643879c9fd172"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-uservalue/zipball/65e286d71432bb625c9f006acd9643879c9fd172",
+                "reference": "65e286d71432bb625c9f006acd9643879c9fd172",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/convert": "dev-main",
+                "plibv4/validate": "dev-main"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-uservalue/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-uservalue/issues"
+            },
+            "time": "2021-05-18T18:45:33+00:00"
+        },
+        {
+            "name": "plibv4/validate",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DarthCorvidus/plibv4-validate.git",
+                "reference": "2a45e43dbc40f6a780da07b4e70263012f161967"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DarthCorvidus/plibv4-validate/zipball/2a45e43dbc40f6a780da07b4e70263012f161967",
+                "reference": "2a45e43dbc40f6a780da07b4e70263012f161967",
+                "shasum": ""
+            },
+            "require": {
+                "plibv4/assert": "dev-main"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "support": {
+                "source": "https://github.com/DarthCorvidus/plibv4-validate/tree/main",
+                "issues": "https://github.com/DarthCorvidus/plibv4-validate/issues"
+            },
+            "time": "2021-05-17T19:07:09+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "plibv4/convert": 20,
+        "plibv4/validate": 20,
+        "plibv4/longeststring": 20,
+        "plibv4/argv": 20,
+        "plibv4/juliandate": 20,
+        "plibv4/command": 20,
+        "plibv4/uservalue": 20,
+        "plibv4/import": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
